@@ -1,0 +1,2585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mechanics of Meta-Utopia: Cultural Dynamics Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  :root {
+    --bg: #FFFFFF; --text: #2A2A2E; --border-md: #E2DDD1;
+    --ff-serif: 'Cormorant Garamond', Georgia, serif;
+    --ff-mono: 'IBM Plex Mono', monospace;
+    --accent: #E68A73;
+    --imp-low: #FDE68A; --imp-med: #E6994D; --imp-high: #A64B35;
+    --moral-dys: #1A1A1A; --moral-neu: #8E8E93; --moral-uto: #F2F2F7;
+    --vir-high: #1B4332; --vir-med: #40916C; --vir-low: #B7E4C7;
+    --transition-main: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body.dark-mode { --bg: #1A1A1A; --text: #F2F2F7; --border-md: #3A3A3C; }
+
+  body { 
+    background: var(--bg); color: var(--text); font-family: var(--ff-serif); 
+    padding: 0 4rem; min-height: 100vh; transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  .page-wrapper { min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+  
+  .second-page { 
+    min-height: 100vh; 
+    padding-top: 8rem; 
+    padding-bottom: 0rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-title {
+    font-family: var(--ff-mono);
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 3.5rem;
+    letter-spacing: 0.15em;
+    text-align: center;
+    width: 100%;
+  }
+
+  .iteration-overview-box {
+    border: none;
+    outline: none;
+    padding: 1rem 0;
+    margin-bottom: 6rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-width: 1680px; 
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+
+  .overview-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 4rem;
+  }
+
+  .overview-top-left {
+    flex: 1.25;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .overview-top-right {
+    flex: 1.35;
+    display: flex;
+    flex-direction: column;
+    padding-left: 3rem;
+    border-left: 1px solid var(--border-md);
+  }
+
+  .iteration-content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+    flex: 1;
+    max-width: 1680px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+
+  /* Data Analytics Layout */
+  .card-visuals {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .card-visuals h4 {
+    font-family: var(--ff-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text);
+    margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    font-weight: 500;
+  }
+
+  .card-data-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.8rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .card-data-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card-data-col h5 {
+    font-family: var(--ff-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #8E8E93;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px dotted var(--border-md);
+    padding-bottom: 0.4rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* Distinct Update Animations */
+  @keyframes accentPulse {
+    0% { color: var(--accent); text-shadow: 0 0 12px rgba(230,138,115,0.7); }
+    100% { color: inherit; text-shadow: none; }
+  }
+  .data-pulse { animation: accentPulse 0.8s ease-out forwards; }
+  
+  @keyframes fadeInSoft {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in-text { animation: fadeInSoft 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  
+  @keyframes fastRowFade {
+    0% { opacity: 0; transform: translateX(-8px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  .animate-fast-row { 
+    animation: fastRowFade 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+  }
+
+  /* Pie Chart Styles */
+  .chart-cell { 
+    width: 100%; height: 260px; position: relative; margin: 0 auto; 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  }
+  .pie-svg { width: 220px; height: 220px; overflow: visible; display: block; margin: auto; }
+  .pie-slice-path { cursor: help; transition: opacity 0.2s, stroke-width 0.2s; }
+  
+  .pie-tooltip {
+    visibility: hidden; position: absolute; background: var(--text); color: var(--bg);
+    font-family: var(--ff-mono); font-size: 11px; padding: 6px 10px; border-radius: 2px;
+    z-index: 100; pointer-events: none; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .variable-label { color: var(--text); font-weight: 500; }
+
+  /* Header & Title Section [PAGE WIDTH] */
+  .header-block { position: relative; padding: 3rem 0 1rem; display: grid; grid-template-columns: 1fr auto; align-items: flex-end; gap: 2rem; max-width: 100%; margin: 0 auto; }
+  .series-tag { font-family: var(--ff-mono); font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.6rem; display: block; }
+  h1 { font-size: 2.2rem; font-weight: 300; letter-spacing: -0.01em; margin-bottom: 0.4rem; padding-right: 3rem; }
+  .subtitle { font-size: 1.1rem; color: #8E8E93; font-style: italic; font-weight: 300; white-space: normal; line-height: 1.4; margin-bottom: 0; padding-right: 3rem; }
+
+  .header-actions { display: flex; align-items: flex-end; justify-content: flex-end; gap: 2.5rem; padding-bottom: 0; padding-right: 0rem; margin-right: 0; height: 100%; }
+  .header-controls { display: flex; align-items: center; gap: 1rem; white-space: nowrap; }
+  .control-label { font-family: var(--ff-mono); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); }
+  .vertical-divider { width: 1px; height: 1.2rem; background-color: var(--border-md); }
+  .split-btn-group { display: flex; align-items: stretch; border: 1px solid var(--border-md); border-radius: 2px; overflow: hidden; }
+  
+  button { transition: all 0.3s ease; }
+  button:hover, .segment:hover { color: var(--accent) !important; border-color: var(--accent) !important; }
+  .toggle-btn:hover, .sub-btn:hover, .segment:not(.active):hover, .sidebar-toggle-btn:hover { background: rgba(230,138,115,0.08) !important; }
+  .scenario-btn.btn-main:hover, .scenario-btn.btn-secondary:hover { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; }
+  .segment.active:hover { color: var(--bg) !important; }
+  
+  .scenario-btn { 
+    font-family: var(--ff-mono); font-size: 0.65rem; padding: 0.55rem 0.9rem; background: transparent; 
+    border: none; color: var(--text); cursor: pointer; text-transform: uppercase; 
+    transition: all 0.3s ease; outline: none; display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+
+  #scenario-mode-toggle .segment { padding: 0.45rem 0.9rem; font-size: 0.65rem; }
+
+  .scenario-btn.btn-main.playing { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; }
+  .scenario-btn.btn-main.completed { background: var(--vir-med) !important; color: white !important; border-color: var(--vir-med) !important;}
+  .scenario-btn.btn-secondary { border-left: 1px solid var(--border-md) !important; }
+  .scenario-btn.pressed { background: var(--vir-med) !important; color: white !important; border-color: var(--vir-med) !important; }
+
+  .btn-icon-container { display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; }
+  .btn-icon-container svg { width: 100%; height: 100%; fill: currentColor; }
+
+  .theme-toggle { position: absolute; top: 4.4rem; right: 0; background: transparent; border: none; cursor: pointer; color: var(--text); padding: 0.5rem; outline: none; z-index: 100; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s ease; }
+  .theme-toggle:hover { background: rgba(142, 142, 147, 0.1); }
+  .theme-toggle svg { width: 20px; height: 20px; fill: currentColor; }
+
+  /* Dropdown Styles */
+  .dropdown-menu {
+      display: none; position: absolute; top: calc(100% + 4px); left: 0; width: 100%;
+      background: var(--bg); border: 1px solid var(--border-md); 
+      border-radius: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+      z-index: 1000; flex-direction: column; overflow: hidden;
+  }
+  .dropdown-menu.show { display: flex; }
+  .dropdown-item {
+      font-family: var(--ff-mono); font-size: 0.65rem; padding: 0.8rem 1.2rem;
+      background: transparent; border: none; border-bottom: 1px solid var(--border-md); color: var(--text); cursor: pointer;
+      text-transform: uppercase; text-align: left; transition: all 0.2s ease; outline: none;
+  }
+  .dropdown-item:last-child { border-bottom: none; }
+  .dropdown-item:hover { background: rgba(230,138,115,0.08); color: var(--accent); }
+  .dropdown-item.active { background: var(--text); color: var(--bg); }
+
+  /* Workspace & Sidebar Structure */
+  .workspace { 
+    flex: 1; display: grid; grid-template-columns: 0px 1fr 220px; 
+    gap: 3rem; align-items: stretch; padding-top: 2rem; padding-bottom: 2rem; 
+    transition: grid-template-columns 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .workspace.sidebar-open { grid-template-columns: 220px 1fr 220px; }
+
+  .panel-column { display: flex; flex-direction: column; height: 100%; justify-content: center; z-index: 10; pointer-events: none; }
+  .panel-column * { pointer-events: auto; }
+  
+  .left-panel { position: relative; z-index: 20; }
+  .left-panel-inner-clip { width: 100%; height: 100%; overflow: hidden; }
+  .left-panel-content { width: 220px; opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; }
+  .workspace.sidebar-open .left-panel-content { opacity: 1; transition: opacity 0.4s ease 0.15s; }
+
+  .sidebar-toggle-btn {
+    position: absolute; top: 50%; left: calc(100% + 1.5rem); transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border-md);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); z-index: 50; outline: none; pointer-events: auto;
+  }
+  .sidebar-toggle-btn svg { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+  .workspace.sidebar-open .sidebar-toggle-btn svg { transform: rotate(180deg); }
+
+  .section-header { font-family: var(--ff-mono); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; color: var(--text); margin-bottom: 1.5rem; letter-spacing: 0.15em; border-bottom: 1px solid var(--border-md); padding-bottom: 0.5rem; }
+
+  .control-panel { display: flex; flex-direction: column; gap: 0.6rem; }
+  .panel-label { font-family: var(--ff-mono); font-size: 0.6rem; text-transform: uppercase; color: #8E8E93; margin-bottom: 0.8rem; letter-spacing: 0.1em; }
+  
+  .toggle-btn { font-family: var(--ff-mono); font-size: 0.65rem; padding: 0.7rem; background: transparent; border: 1px solid var(--border-md); cursor: pointer; text-align: left; text-transform: uppercase; outline: none; color: var(--text); }
+  .toggle-btn.active { border-color: var(--text); background: var(--text); color: var(--bg); }
+  
+  .sub-btn-group { display: flex; flex-direction: column; gap: 4px; padding-left: 0; margin-top: 0.2rem; }
+  .sub-btn { font-family: var(--ff-mono); font-size: 0.55rem; padding: 0.4rem 0.6rem; background: transparent; border: 1px solid var(--border-md); cursor: pointer; text-transform: uppercase; color: #8E8E93; transition: 0.2s; text-align: left; outline: none; }
+  .sub-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(230,138,115,0.08); box-shadow: 0 0 8px rgba(230,138,115,0.2); }
+  .sub-btn:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); border-color: var(--border-md); color: #8E8E93; }
+
+  .segmented-toggle { display: flex; border: 1px solid var(--border-md); border-radius: 2px; overflow: hidden; margin-bottom: 0.5rem; }
+  .segment { flex: 1; font-family: var(--ff-mono); font-size: 0.55rem; padding: 0.6rem 0.2rem; text-align: center; text-transform: uppercase; cursor: pointer; background: transparent; color: #8E8E93; border: none; outline: none; border-right: 1px solid transparent; border-left: 1px solid transparent; }
+  .segment.active { background: var(--text); color: var(--bg); }
+  .segment:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .sim-grid-controls .segment { padding: 0.35rem 0 !important; font-size: 0.55rem !important; }
+
+  .collapsible-section { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s ease; }
+  .collapsible-section.visible { max-height: 250px; opacity: 1; }
+
+  .key-section { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; margin-bottom: 0; }
+  .key-section.visible { max-height: 450px; opacity: 1; margin-bottom: 1.8rem; }
+
+  .topo-area { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; min-height: 850px; position: relative; padding-top: 2rem; pointer-events: none; }
+  .sim-mode .topo-area { padding-top: 1.5rem; }
+  body:not(.sim-mode) .topo-area { justify-content: center; }
+  
+  .topo-label-top { font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: #8E8E93; margin-bottom: 1rem; z-index: 5; transition: margin 0.4s ease; }
+  body:not(.sim-mode) .topo-label-top { margin-bottom: 5rem; }
+
+  .grid-viewport { display: flex; justify-content: center; align-items: center; width: 100%; position: relative; }
+  .sim-mode .grid-viewport { display: grid; gap: 20px 30px; grid-template-rows: auto auto; grid-template-columns: 350px 350px 350px; }
+  .grid-box { display: none; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+  .sim-mode .grid-box { display: flex; width: 100% !important; }
+
+  .sim-mode #box-cultures { grid-column: 1; grid-row: 1; }
+  .sim-mode #box-main { grid-column: 3; grid-row: 1; }
+  .sim-mode #box-impermeability { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+  .sim-mode #box-virality { grid-column: 1; grid-row: 2; }
+  .sim-mode #box-integrity { grid-column: 3; grid-row: 2; }
+
+  .topo-svg { width: 100%; height: auto; overflow: visible; display: block; }
+  .topo-sub-label { font-family: var(--ff-mono); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.15em; color: #8E8E93; margin-top: 1.2rem; opacity: 0; transition: opacity 0.3s ease; }
+  .sim-mode .topo-sub-label { opacity: 1; }
+
+  .hex-cell { stroke-linejoin: round; pointer-events: auto; }
+  .hex-circle { display: none; stroke: none; pointer-events: auto; }
+  body:not(.sim-mode) .hex-circle.active { display: block; }
+  body.sim-ready .hex-cell { transition: fill 0.6s ease, stroke 0.6s ease, stroke-width 0.6s ease, transform 0.4s ease; }
+  body.sim-ready .hex-circle { transition: fill 0.6s ease; }
+  
+  .hex-label { font-family: var(--ff-mono); font-weight: 500; text-anchor: middle; dominant-baseline: middle; pointer-events: none; opacity: 1; transition: fill 0.3s ease; }
+  .hide-scores .hex-label { opacity: 0 !important; visibility: hidden; }
+
+  .key-item { display: flex; align-items: center; gap: 0.8rem; font-family: var(--ff-mono); font-size: 0.65rem; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .swatch { width: 14px; height: 16px; background: currentColor; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); flex-shrink: 0; }
+  .key-range { font-size: 0.55rem; color: #8E8E93; margin-left: auto; font-style: normal; opacity: 0; transition: opacity 0.3s; }
+  .show-ranges .key-range { opacity: 1; }
+
+  /* Expanded Interaction Log UI Styling */
+  #interaction-log-container {
+      padding-right: 0.5rem;
+      pointer-events: auto;
+  }
+  #interaction-log-container::-webkit-scrollbar { width: 6px; }
+  #interaction-log-container::-webkit-scrollbar-track { background: transparent; }
+  #interaction-log-container::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; }
+  #interaction-log-container::-webkit-scrollbar-thumb:hover { background: #8E8E93; }
+
+  .phase-block {
+      border: 1px solid transparent; border-left: 3px solid var(--accent);
+      padding: 1.25rem 1.5rem; margin-bottom: 0.75rem;
+      background: rgba(0,0,0,0.02); border-radius: 0 4px 4px 0;
+  }
+  body.dark-mode .phase-block { background: rgba(255,255,255,0.02); }
+  
+  .epoch-header {
+      font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.15em; color: var(--text); font-weight: 600; margin: 0 0 1rem 0;
+      border-bottom: 1px dashed var(--accent); padding-bottom: 0.75rem;
+      display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .log-entry {
+     display: flex; justify-content: space-between; align-items: center; gap: 2.5rem;
+     padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-md);
+     border-radius: 4px; font-family: var(--ff-mono); font-size: 0.85rem; transition: background 0.3s;
+  }
+  .log-entry:last-child { border-bottom: none; }
+  
+  .interaction-seq { color: #8E8E93; font-size: 0.8rem; }
+  .interaction-seq span { color: var(--text); font-weight: 600; }
+
+  .scroll-arrow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-md);
+      color: var(--text);
+      background: transparent;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+      text-decoration: none;
+      z-index: 10;
+  }
+  .scroll-arrow.down-arrow {
+      position: absolute;
+      bottom: -4rem;
+      left: 50%;
+      transform: translateX(-50%);
+  }
+  .scroll-arrow:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(230,138,115,0.05);
+  }
+  body:not(.sim-mode) .scroll-arrow {
+      display: none !important;
+  }
+</style>
+</head>
+<body class="sim-mode show-ranges">
+
+<div style="position: fixed; top: 0; right: 0; width: 14px; height: 100vh; background: transparent; z-index: 10000;">
+    <div id="scroll-progress-bar" style="width: 100%; height: 0%; background: var(--accent); transition: height 0.1s ease-out;"></div>
+</div>
+
+<div class="page-wrapper">
+  
+  <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon-btn">
+    <span id="theme-icon-container">
+      <svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+    </span>
+  </button>
+
+  <header class="header-block">
+    <div class="title-section">
+      <span class="series-tag">Next-Generation Macrostrategy</span>
+      <h1>The Mechanics of Meta-Utopia: Cultural Dynamics Simulator</h1>
+      <div class="subtitle">A cellular automaton for topologically modelling civilisation-scale cultural dynamics across sovereign political units</div>
+    </div>
+
+    <div class="header-actions">
+      <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-end; justify-content: flex-end;">
+        <div class="header-controls" style="position: relative;">
+          <div class="split-btn-group">
+            <button id="scenario-dropdown-btn" class="scenario-btn" onclick="toggleScenarioDropdown()" style="min-width: 280px; justify-content: space-between;">
+              Civilisational Scenarios: Random
+              <svg viewBox="0 0 24 24" width="14" height="14" style="fill: currentColor; margin-left: 8px;"><path d="M7 10l5 5 5-5z"/></svg>
+            </button>
+          </div>
+          <div id="scenario-dropdown-menu" class="dropdown-menu">
+            <button class="dropdown-item active" data-mode="random" onclick="setDynamicScenario('random')">Random</button>
+            <button class="dropdown-item" data-mode="monocultural" onclick="setDynamicScenario('monocultural')">Monocultural Takeover</button>
+            <button class="dropdown-item" data-mode="dystopian" onclick="setDynamicScenario('dystopian')">Meta Dystopian Enclosure</button>
+            <button class="dropdown-item" data-mode="utopian" onclick="setDynamicScenario('utopian')">Meta Utopian Uplift</button>
+          </div>
+        </div>
+        <div class="header-controls">
+          <div class="control-label">Simulation Controls</div>
+          <div class="vertical-divider"></div>
+          <div class="split-btn-group">
+            <button id="scenario-1-btn" class="scenario-btn btn-main" onclick="toggleScenario(1)">
+              <span id="scenario-icon" class="btn-icon-container">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </span>
+              Run Simulation
+            </button>
+            <button id="revert-btn" class="scenario-btn btn-secondary" onclick="resetToInitial()">
+              <span class="btn-icon-container">
+                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+              </span>
+              Revert to Initial State
+            </button>
+            <button id="gen-config-btn" class="scenario-btn btn-secondary" onclick="randomizeConfiguration()">
+              <span class="btn-icon-container">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+              </span>
+              Generate New Configuration
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="workspace" id="main-workspace">
+    <div class="panel-column left-panel">
+      <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Control Panel">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="10 8 14 12 10 16"></polyline>
+        </svg>
+      </button>
+      <div class="left-panel-inner-clip">
+        <div class="left-panel-content">
+          <div class="section-header">Control Panel</div>
+          <div class="control-panel">
+            <div id="primary-overlays-group">
+              <div class="panel-label">Primary Overlays</div>
+              <button id="btn-cultures" class="toggle-btn" onclick="setPrimary('cultures')">Cultural Affiliation</button>
+              <button id="btn-moral" class="toggle-btn" onclick="setPrimary('moral')">Sub-topia Status</button>
+              <button id="btn-virality" class="toggle-btn" onclick="setPrimary('virality')">Memetic Virality</button>
+              <button id="btn-integrity" class="toggle-btn" onclick="setPrimary('integrity')">Cultural Integrity</button>
+              <button id="btn-imp-main" class="toggle-btn" onclick="activateGridMode()">Border Impermeability</button>
+            </div>
+            <div id="overlays-group" class="collapsible-section">
+              <div class="panel-label">Secondary Overlays</div>
+              <div class="sub-btn-group">
+                 <button id="ovl-integrity" class="sub-btn" onclick="setSecondary('integrity')">Cultural Integrity</button>
+                 <button id="ovl-virality" class="sub-btn" onclick="setSecondary('virality')">Memetic Virality</button>
+                 <button id="ovl-moral" class="sub-btn" onclick="setSecondary('moral')">Sub-topia Status</button>
+                 <button id="ovl-cultures" class="sub-btn" onclick="setSecondary('cultures')">Cultural Affiliation</button>
+                 <button id="ovl-impermeability" class="sub-btn" onclick="setSecondary('impermeability')">Border Impermeability</button>
+              </div>
+            </div>
+            <div class="panel-label" style="margin-top: 1.5rem;">Meta-Settings</div>
+            <div class="segmented-toggle" id="level-toggle-sidebar">
+              <button id="lvl-basic" class="segment" onclick="setSystemLevel('basic')">Basic</button>
+              <button id="lvl-complex" class="segment" onclick="setSystemLevel('complex')">Complex</button>
+            </div>
+            <div class="segmented-toggle" id="density-toggle">
+              <button id="dens-compact" class="segment active" onclick="setDensity('compact')">Compact</button>
+              <button id="dens-spatial" class="segment" onclick="setDensity('spatial')">Spatial</button>
+            </div>
+            <div class="segmented-toggle" id="sim-toggle">
+              <button class="segment active" onclick="setSimultaneous(true)">Simultaneous</button>
+              <button class="segment" onclick="setSimultaneous(false)">Single</button>
+            </div>
+            <div class="segmented-toggle" id="spectrum-toggle">
+              <button class="segment active" id="spec-on" onclick="setSpectrum(true)">Spectrum</button>
+              <button class="segment" id="spec-off" onclick="setSpectrum(false)">Simple</button>
+            </div>
+            <div id="spectrum-sub-group" class="collapsible-section visible">
+              <div class="sub-btn-group">
+                <button class="sub-btn active" id="sub-scores" onclick="toggleScores()">Number Scores</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="topo-area">
+      <div class="topo-label-top" id="top-label">Topological States</div>
+      <div class="grid-viewport">
+          <div class="grid-box" id="box-cultures"><svg class="topo-svg" viewBox="-160 -160 320 320"><g id="mesh-cultures"></g></svg><div class="topo-sub-label">Cultural Affiliation</div></div>
+          <div class="grid-box" id="box-main"><svg class="topo-svg" viewBox="-160 -160 320 320"><g id="mesh-main"></g></svg><div class="topo-sub-label">Sub-topia Status</div></div>
+          <div class="grid-box" id="box-impermeability">
+              <svg class="topo-svg" viewBox="-160 -160 320 320"><g id="mesh-impermeability"></g></svg>
+              <div class="topo-sub-label">Border Impermeability</div>
+              <div class="sim-grid-controls" style="display: flex; gap: 0.5rem; margin-top: 8.5rem; justify-content: center; width: 100%; pointer-events: auto;">
+                <div class="segmented-toggle small-toggle" id="scale-toggle" style="margin-bottom: 0; width: 140px;">
+                  <button class="segment" onclick="setScale(1)">XS</button>
+                  <button class="segment" onclick="setScale(2)">S</button>
+                  <button class="segment active" onclick="setScale(3)">M</button>
+                  <button class="segment" onclick="setScale(4)">L</button>
+                  <button class="segment" onclick="setScale(5)">XL</button>
+                </div>
+                <div class="segmented-toggle small-toggle" id="range-toggle" style="margin-bottom: 0; width: 80px;">
+                  <button id="range-10" class="segment" onclick="setScoreRange(10)">1-10</button>
+                  <button id="range-100" class="segment active" onclick="setScoreRange(100)">1-100</button>
+                </div>
+              </div>
+          </div>
+          <div class="grid-box" id="box-virality"><svg class="topo-svg" viewBox="-160 -160 320 320"><g id="mesh-virality"></g></svg><div class="topo-sub-label">Memetic Virality</div></div>
+          <div class="grid-box" id="box-integrity"><svg class="topo-svg" viewBox="-160 -160 320 320"><g id="mesh-integrity"></g></svg><div class="topo-sub-label">Cultural Integrity</div></div>
+          
+          <a href="#scenario-start" class="scroll-arrow down-arrow">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="10 8 14 12 10 16" transform="rotate(90 12 12)"></polyline>
+              </svg>
+          </a>
+      </div>
+    </div>
+
+    <div class="panel-column right-panel">
+      <div class="section-header">Overlay Keys</div>
+      <div class="keys-panel" id="keys">
+        <div class="key-section" id="key-cultures"><div class="panel-label">Civilisations (Fill)</div><div id="culture-keys-container"></div></div>
+        <div class="key-section" id="key-moral"><div class="panel-label">Status (Fill)</div>
+          <div class="key-item"><div class="swatch" style="color: var(--moral-dys)"></div> Dystopian <span class="key-range" id="range-moral-low">0-33</span></div>
+          <div class="key-item"><div class="swatch" style="color: var(--moral-neu)"></div> Notopian <span class="key-range" id="range-moral-med">34-66</span></div>
+          <div class="key-item"><div class="swatch" style="color: var(--moral-uto)"></div> Utopian <span class="key-range" id="range-moral-high">67-100</span></div>
+        </div>
+        <div class="key-section" id="key-virality"><div class="panel-label">Virality (Fill)</div>
+          <div class="key-item"><div class="swatch" style="color: var(--vir-low)"></div> Low <span class="key-range" id="range-virality-low">0-33</span></div>
+          <div class="key-item"><div class="swatch" style="color: var(--vir-med)"></div> Med <span class="key-range" id="range-virality-med">34-66</span></div>
+          <div class="key-item"><div class="swatch" style="color: var(--vir-high)"></div> High <span class="key-range" id="range-virality-high">67-100</span></div>
+        </div>
+        <div class="key-section" id="key-impermeability"><div class="panel-label">Impermeability (Borders)</div>
+          <div class="key-item"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0; overflow: visible;"><polygon points="8,1 15,5 15,13 8,17 1,13 1,5" fill="none" stroke="var(--imp-low)" stroke-width="2" stroke-linejoin="round"/></svg> &nbsp;Low <span class="key-range" id="range-imp-low">0-33</span></div>
+          <div class="key-item"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0; overflow: visible;"><polygon points="8,1 15,5 15,13 8,17 1,13 1,5" fill="none" stroke="var(--imp-med)" stroke-width="2" stroke-linejoin="round"/></svg> &nbsp;Med <span class="key-range" id="range-imp-med">34-66</span></div>
+          <div class="key-item"><svg width="14" height="16" viewBox="0 0 16 18" style="flex-shrink: 0; overflow: visible;"><polygon points="8,1 15,5 15,13 8,17 1,13 1,5" fill="none" stroke="var(--imp-high)" stroke-width="2" stroke-linejoin="round"/></svg> &nbsp;High <span class="key-range" id="range-imp-high">67-100</span></div>
+        </div>
+        <div class="key-section" id="key-integrity"><div class="panel-label">Integrity (Fill)</div>
+          <div class="key-item"><div class="swatch" style="color: #E68A73"></div> Low <span class="key-range" id="range-integrity-low">0-33</span></div>
+          <div class="key-item"><div class="swatch" style="color: #E6994D"></div> Med <span class="key-range" id="range-integrity-med">34-66</span></div>
+          <div class="key-item"><div class="swatch" style="color: #FDE68A"></div> High <span class="key-range" id="range-integrity-high">67-100</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="second-page" id="scenario-start">
+    
+    <div class="iteration-overview-box">
+      <div class="overview-top-row">
+        <div class="overview-top-left">
+            <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 0.15em;">Civilisation Scale Scenario</div>
+            
+            <div id="scenario-display-block" style="margin-bottom: 2rem;">
+                <div id="scenario-main-title" style="font-family: var(--ff-serif); font-size: 1.85rem; color: var(--text);">Awaiting Initialization...</div>
+                <div id="scenario-main-desc" style="color: #8E8E93; font-style: italic; margin-top: 0.6rem; font-size: 1.1rem;">...</div>
+            </div>
+            
+            <div id="overview-dominant-cultures" style="margin-top: 3.5rem;">
+            </div>
+        </div>
+        
+        <div class="overview-top-right" id="overview-major-metrics">
+           </div>
+      </div>
+
+      <div id="world-building-section" style="margin-top: 8rem; border-top: 1px solid var(--border-md); padding-top: 7.5rem;">
+          <h3 style="font-family: var(--ff-mono); font-size: 1.15rem; font-weight: 500; text-transform: uppercase; color: var(--text); letter-spacing: 0.15em; margin-bottom: 4rem;">World Build History</h3>
+          <div id="world-building-content">
+             <div style="text-align: left; color: #8E8E93; font-style: italic;">Awaiting simulation data...</div>
+          </div>
+      </div>
+    </div>
+
+    <div class="iteration-content-grid">
+      <div class="content-column" style="display: flex; flex-direction: column; align-items: flex-start;">
+        <h3 class="section-title" style="font-size: 1.15rem; font-weight: 500; width: 100%; border-top: 1px solid var(--border-md); padding-top: 7.5rem; margin-top: 6rem; text-align: left; max-width: 1680px; margin-left: auto; margin-right: auto;">Data Analytics</h3>
+        
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; width: 100%; max-width: 1680px; margin: 0 auto;">
+            
+            <div class="pie-grid-viewport" style="display: grid; gap: 2rem 1rem; grid-template-rows: auto auto; grid-template-columns: 1fr 1fr 1fr; align-items: center; justify-items: center; width: 100%;">
+                <div class="card-visuals" style="grid-column: 1; grid-row: 1;">
+                    <h4>Cultural Affiliation</h4>
+                    <div class="chart-cell" id="chart-cult-single"></div>
+                </div>
+                <div class="card-visuals" style="grid-column: 3; grid-row: 1;">
+                    <h4>Sub-topia Status</h4>
+                    <div class="chart-cell" id="chart-moral-single"></div>
+                </div>
+                <div class="card-visuals" style="grid-column: 2; grid-row: 1 / span 2; align-self: center;">
+                    <h4>Border Impermeability</h4>
+                    <div class="chart-cell" id="chart-imp-single"></div>
+                </div>
+                <div class="card-visuals" style="grid-column: 1; grid-row: 2;">
+                    <h4>Memetic Virality</h4>
+                    <div class="chart-cell" id="chart-vir-single"></div>
+                </div>
+                <div class="card-visuals" style="grid-column: 3; grid-row: 2;">
+                    <h4>Cultural Integrity</h4>
+                    <div class="chart-cell" id="chart-integ-single"></div>
+                </div>
+            </div>
+
+            <div class="analytics-tables-sidebar" style="display: flex; flex-direction: column; gap: 2.5rem; padding-left: 3rem;">
+                <div class="table-block">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 0.5rem;">Cultural Affiliation</h4>
+                    <div class="card-data-container" style="margin-top: 0; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                        <div class="card-data-col"><h5>Init</h5><div id="cell-cult-init">—</div></div>
+                        <div class="card-data-col"><h5>End</h5><div id="cell-cult-end">—</div></div>
+                        <div class="card-data-col"><h5>Shift</h5><div id="cell-cult-shift">—</div></div>
+                    </div>
+                </div>
+                
+                <div class="table-block">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 0.5rem;">Sub-topia Status</h4>
+                    <div class="card-data-container" style="margin-top: 0; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                        <div class="card-data-col"><h5>Init</h5><div id="cell-moral-init">—</div></div>
+                        <div class="card-data-col"><h5>End</h5><div id="cell-moral-end">—</div></div>
+                        <div class="card-data-col"><h5>Shift</h5><div id="cell-moral-shift">—</div></div>
+                    </div>
+                </div>
+
+                <div class="table-block">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 0.5rem;">Memetic Virality</h4>
+                    <div class="card-data-container" style="margin-top: 0; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                        <div class="card-data-col"><h5>Init</h5><div id="cell-vir-init">—</div></div>
+                        <div class="card-data-col"><h5>End</h5><div id="cell-vir-end">—</div></div>
+                        <div class="card-data-col"><h5>Shift</h5><div id="cell-vir-shift">—</div></div>
+                    </div>
+                </div>
+
+                <div class="table-block">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 0.5rem;">Border Impermeability</h4>
+                    <div class="card-data-container" style="margin-top: 0; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                        <div class="card-data-col"><h5>Init</h5><div id="cell-imp-init">—</div></div>
+                        <div class="card-data-col"><h5>End</h5><div id="cell-imp-end">—</div></div>
+                        <div class="card-data-col"><h5>Shift</h5><div id="cell-imp-shift">—</div></div>
+                    </div>
+                </div>
+
+                <div class="table-block">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 0.5rem;">Cultural Integrity</h4>
+                    <div class="card-data-container" style="margin-top: 0; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                        <div class="card-data-col"><h5>Init</h5><div id="cell-integ-init">—</div></div>
+                        <div class="card-data-col"><h5>End</h5><div id="cell-integ-end">—</div></div>
+                        <div class="card-data-col"><h5>Shift</h5><div id="cell-integ-shift">—</div></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="combined-prose-container" style="width: 100%; max-width: 1680px; margin: 0 auto; padding-top: 4rem;">
+           </div>
+
+        <div class="iteration-overview-box" style="display: none; flex-direction: column; align-items: center; margin-bottom: 8rem; margin-top: 8rem; padding: 4rem 2.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; width: 100%;">
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 3.5rem; text-align: center; font-weight: 500;">Macro-Variable Trajectories</h4>
+                    <div id="line-chart-area" style="width: 100%; position: relative;">
+                        <svg id="line-chart-svg" width="100%" height="auto" viewBox="0 0 600 400" style="overflow: visible; display: block;">
+                            <defs>
+                                <clipPath id="line-clip-path">
+                                    <rect id="line-clip-rect" x="80" y="0" width="600" height="400" />
+                                </clipPath>
+                                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            <g id="line-grid-group"></g>
+                            <g id="line-path-group" clip-path="url(#line-clip-path)"></g>
+                        </svg>
+                    </div>
+                    <div id="line-chart-legend" style="display: flex; gap: 1.5rem; margin-top: 3.5rem; font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--text); flex-wrap: wrap; justify-content: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 12px; height: 12px; background: #8E8E93; border-radius: 50%;"></div> Sub-topia Status</div>
+                        <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 12px; height: 12px; background: #40916C; border-radius: 50%;"></div> Memetic Virality</div>
+                        <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 12px; height: 12px; background: transparent; border: 2px solid #A64B35; border-radius: 50%;"></div> Border Impermeability</div>
+                        <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 12px; height: 12px; background: #E6994D; border-radius: 50%;"></div> Cultural Integrity</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <h4 style="font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text); margin-bottom: 3.5rem; text-align: center; font-weight: 500;">Cultural Genetic Profiles</h4>
+                    <div id="radar-chart-area" style="width: 100%; position: relative;">
+                        <svg id="radar-chart-svg" width="100%" height="auto" viewBox="0 0 600 500" style="overflow: visible; display: block;"></svg>
+                    </div>
+                    <div id="multi-var-graph-legend" style="display: flex; gap: 1.5rem; margin-top: 3.5rem; font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--text); flex-wrap: wrap; justify-content: center;">
+                         </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title" style="display: none;">Interaction Sequence</h3>
+        <div class="iteration-overview-box" style="display: none; width: fit-content; max-width: 100%; margin: 0 auto; flex-direction: column; padding: 3rem 1rem 3rem 2.5rem;">
+            <div id="interaction-log-container" style="display: flex; flex-direction: column; max-height: 600px; overflow-y: auto;">
+                <div style="text-align: center; color: #8E8E93; font-style: italic; margin-top: 2rem;">Awaiting simulation data...</div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10rem; padding-bottom: 4rem;">
+        <a href="#" class="scroll-arrow" onclick="window.scrollTo(0,0); return false;" style="margin-bottom: 2rem; grid-column: unset; grid-row: unset; align-self: unset; justify-self: unset;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="16 14 12 10 8 14"></polyline>
+            </svg>
+        </a>
+        <div class="series-tag" style="margin-bottom: 0; line-height: 1;">MoMU</div>
+    </div>
+    
+  </section>
+</div>
+
+<script>
+window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    const bar = document.getElementById('scroll-progress-bar');
+    if(bar) bar.style.height = scrolled + '%';
+});
+
+let nodes = [];
+let initialState = null; 
+let phaseHistory = [];
+let proseLog = [];
+let epochHistory = []; 
+let simulationEpoch = 0;
+let activePrimary = 'integrity'; 
+let activeSecondary = null;
+let isImpOverlayActive = false; 
+let isSimultaneous = true; 
+let isSpectrum = true;    
+let currentDensity = 'compact'; 
+let showScores = true;    
+let currentLayers = 3; 
+let isPlaying = false;
+let isCompleted = false;
+let scoreScale = 100;
+let simInterval = null;
+let currentLevel = 'basic'; 
+let chartAnimFrame = null;
+let activeScenarioMode = 'random';
+
+const PASTEL_RAINBOW = ['#FFB7B2', '#FFDAC1', '#FFF9C4', '#C5E1A5', '#B3E5FC', '#C5CAE9', '#D1C4E9'];
+const CULTURE_NAMES = ["The Culture", "The Idirans", "The Homomda", "The Morthanveld", "The Azad", "The Gzilt", "The Sublimed"];
+
+let cultureScores = {
+  moral: PASTEL_RAINBOW.map(() => Math.random() * 100),
+  integrity: PASTEL_RAINBOW.map(() => Math.random() * 100),
+  virality: PASTEL_RAINBOW.map(() => Math.random() * 100),
+  impermeability: PASTEL_RAINBOW.map(() => Math.random() * 100)
+};
+
+const paletteMap = {
+  'integrity': ['#E68A73', '#E6994D', '#FDE68A'],
+  'moral': ['#1A1A1A', '#8E8E93', '#F2F2F7'],
+  'virality': ['#B7E4C7', '#40916C', '#1B4332'],
+  'impermeability': ['#FDE68A', '#E6994D', '#A64B35'],
+  'cultures': PASTEL_RAINBOW
+};
+
+const ICONS = {
+  sun: `<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>`,
+  moon: `<svg viewBox="0 0 24 24"><path d="M12.1 22c-4.8 0-9-3.4-9.8-8.2-.2-1.1 0-2.1.3-3.1.4-1.3 1.1-2.4 2.1-3.3.4-.4.8-.7 1.2-1 .3-.2.7-.3 1.1-.3.3 0 .6.1.8.3.3.3.4.6.3.9-.7 2.7.1 5.5 2.1 7.4 2 1.9 4.7 2.6 7.3 1.9.3-.1.7 0 .9.3.3.3.4.6.3.9-.1.3-.2.6-.4.9-.8 1.2-1.9 2.1-3.3 2.7-1 .5-2.1.7-3.1.7h-.1z"/></svg>`,
+  play: `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`,
+  pause: `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
+  check: `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`
+};
+
+const SCENARIO_NAMES = {
+    'random': 'Random',
+    'monocultural': 'Monocultural Takeover',
+    'dystopian': 'Meta Dystopian Enclosure',
+    'utopian': 'Meta Utopian Uplift'
+};
+
+function toggleScenarioDropdown() {
+    if (isPlaying) return;
+    document.getElementById('scenario-dropdown-menu').classList.toggle('show');
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('#scenario-dropdown-btn') && !event.target.closest('#scenario-dropdown-btn')) {
+        const dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+function setDynamicScenario(mode) {
+    activeScenarioMode = mode;
+    document.getElementById('scenario-dropdown-btn').innerHTML = `Civilisational Scenarios: ${SCENARIO_NAMES[mode]} <svg viewBox="0 0 24 24" width="14" height="14" style="fill: currentColor; margin-left: 8px;"><path d="M7 10l5 5 5-5z"/></svg>`;
+    
+    document.querySelectorAll('#scenario-dropdown-menu .dropdown-item').forEach(el => {
+       el.classList.toggle('active', el.dataset.mode === mode);
+    });
+    
+    document.getElementById('scenario-dropdown-menu').classList.remove('show');
+    randomizeConfiguration();
+}
+
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+const proseBgColors = [
+    'rgba(230, 138, 115, 0.06)', // Culture
+    'rgba(142, 142, 147, 0.06)', // Moral
+    'rgba(64, 145, 108, 0.06)',  // Virality
+    'rgba(166, 75, 53, 0.06)',   // Impermeability
+    'rgba(230, 153, 77, 0.06)'   // Integrity
+];
+
+const proseBorders = [
+    'var(--accent)',
+    'var(--moral-neu)',
+    'var(--vir-med)',
+    'var(--imp-high)',
+    'var(--imp-med)'
+];
+
+const variableLabels = [
+    "Cultural Affiliation", 
+    "Sub-topia Status", 
+    "Memetic Virality", 
+    "Border Impermeability", 
+    "Cultural Integrity"
+];
+
+function formatSection(texts, cultureColorHex) {
+    return texts.map((t, i) => {
+        let bg = proseBgColors[i];
+        let border = proseBorders[i];
+        if (i === 0 && cultureColorHex) {
+            bg = hexToRgba(cultureColorHex, 0.08);
+            border = cultureColorHex;
+        }
+        
+        const widthCalc = (i < 2) ? 'calc(50% - 0.75rem)' : 'calc(33.333% - 1rem)';
+        
+        return `
+        <div style="width: ${widthCalc}; display: flex; flex-direction: column; background: ${bg}; border-left: 3px solid ${border}; padding: 1.5rem 2rem; border-radius: 0 4px 4px 0; color: var(--text); box-sizing: border-box;">
+            <div style="font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; color: #8E8E93; letter-spacing: 0.1em; border-bottom: 1px dashed var(--border-md); margin-bottom: 1rem; padding-bottom: 0.6rem; display: block; font-weight: 600;">
+                ${variableLabels[i]}
+            </div>
+            <div style="font-size: 1.2rem; line-height: 1.6; text-align: left;">
+                ${t}
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function toggleSidebar() {
+    const workspace = document.getElementById('main-workspace');
+    workspace.classList.toggle('sidebar-open');
+}
+
+function updateHTMLWithAnim(elId, html, animType = 'none') {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (el._rawHTML !== html) {
+        el._rawHTML = html;
+        el.innerHTML = html;
+        el.classList.remove('data-pulse', 'fade-in-text');
+        void el.offsetWidth; 
+        
+        if (animType === 'pulse') {
+            el.classList.add('data-pulse');
+        } else if (animType === 'fade') {
+            const rows = el.querySelectorAll('.wb-row');
+            if (rows.length > 0) {
+                const targetRow = rows[rows.length - 1];
+                if (targetRow) targetRow.classList.add('fade-in-text');
+            }
+        }
+    }
+}
+
+const generatePlaceholderExp = () => {
+    const dummyArray = Array(5).fill(`
+        <div style="margin-bottom: 1.2rem;">
+            <span style="font-family: var(--ff-mono); font-size: 0.7rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.3rem;">Initial State</span>
+            <span style="color: #8E8E93; font-style: italic;">Calculating initial distribution across the grid...</span>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+            <span style="font-family: var(--ff-mono); font-size: 0.7rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.3rem;">End State</span>
+            <span style="color: #8E8E93; font-style: italic;">Waiting for epoch completion to determine final distribution.</span>
+        </div>
+        <div>
+            <span style="font-family: var(--ff-mono); font-size: 0.7rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.3rem;">Total Shift</span>
+            <span style="color: #8E8E93; font-style: italic;">Comparison will be available once simulation concludes.</span>
+        </div>
+    `);
+    
+    const reorderedDummy = [dummyArray[0], dummyArray[1], dummyArray[2], dummyArray[4], dummyArray[3]];
+    
+    return `
+    <div class="wb-row" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; width: 100%;">
+        ${formatSection(reorderedDummy, null)}
+    </div>
+    `;
+};
+
+function toggleScenario(id) {
+  if (isCompleted) { resetToInitial(); return; }
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('scenario-1-btn');
+  const icon = document.getElementById('scenario-icon');
+  if (isPlaying) {
+    btn.classList.add('playing');
+    btn.classList.remove('completed');
+    btn.lastChild.textContent = ' In-Progress';
+    icon.innerHTML = ICONS.pause;
+    
+    const logContainer = document.getElementById('interaction-log-container');
+    if (simulationEpoch === 0 && logContainer) logContainer.innerHTML = '';
+    
+    simInterval = setInterval(runSimulationStep, 800);
+  } else {
+    btn.classList.remove('playing');
+    btn.lastChild.textContent = ' Run Simulation';
+    icon.innerHTML = ICONS.play;
+    clearInterval(simInterval);
+    simInterval = null;
+  }
+  updateButtonStates();
+}
+
+function getNeighbors(node) {
+  const directions = [{q: 1, r: 0}, {q: 1, r: -1}, {q: 0, r: -1}, {q: -1, r: 0}, {q: -1, r: 1}, {q: 0, r: 1}];
+  return nodes.filter(other => directions.some(d => other.q === node.q + d.q && other.r === node.r + d.r));
+}
+
+const getSwatch = (cIdx, moralVal) => {
+    let statusColor = 'var(--moral-neu)';
+    if (moralVal >= 67) statusColor = 'var(--moral-uto)';
+    else if (moralVal <= 33) statusColor = 'var(--moral-dys)';
+    return `
+    <div style="display: inline-flex; gap: 2px; vertical-align: middle;">
+        <div style="width: 14px; height: 16px; background: ${PASTEL_RAINBOW[cIdx]}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+        <div style="width: 14px; height: 16px; background: ${statusColor}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+    </div>`;
+}
+
+function captureEpochState(nodeData) {
+    const metrics = ['moral', 'virality', 'impermeability', 'integrity'];
+    const avgs = {};
+    metrics.forEach(m => {
+        avgs[m] = nodeData.reduce((sum, n) => sum + n[m], 0) / nodeData.length;
+    });
+    
+    const counts = new Array(7).fill(0);
+    nodeData.forEach(n => counts[n.cultureIndex]++);
+    
+    epochHistory.push({ avgs, counts });
+}
+
+function runSimulationStep() {
+  let changed = false;
+  let epochLogs = '';
+  let rowDelay = 0;
+  simulationEpoch++;
+  const nextStates = nodes.map(n => ({...n}));
+  
+  nodes.forEach((target, index) => {
+    const neighbors = getNeighbors(target);
+    let winningOrigin = null;
+    let targetLogs = '';
+
+    neighbors.forEach(origin => {
+      if (origin.cultureIndex !== target.cultureIndex) {
+          const v = formatScore(origin.virality);
+          const imp = formatScore(target.impermeability);
+          const integ = formatScore(target.integrity);
+
+          if (origin.virality > target.impermeability && origin.virality > target.virality) {
+            if (origin.virality > target.integrity) {
+              winningOrigin = origin;
+            } else {
+              targetLogs += `
+              <div class="log-entry animate-fast-row" style="animation-delay: ${rowDelay}s; opacity: 0;">
+                  <div style="display: flex; align-items: center; flex-shrink: 0; min-width: 250px;">
+                      <span style="font-weight: 600; color: var(--text); min-width: 30px;">${origin.chessId}</span> 
+                      ${getSwatch(origin.cultureIndex, origin.moral)}
+                      <svg viewBox="0 0 24 24" width="16" height="16" style="margin: 0 12px; fill: var(--imp-high);"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                      <span style="font-weight: 600; color: var(--text); min-width: 30px;">${target.chessId}</span> 
+                      ${getSwatch(target.cultureIndex, target.moral)}
+                  </div>
+                  <div class="interaction-seq" style="flex-grow: 1;">
+                      Virality (<span>${v}</span>) &gt; Border Imp. (<span>${imp}</span>) <span style="color: var(--imp-high); font-weight: bold; margin: 0 4px;">BUT</span> Virality (<span>${v}</span>) &lt; Integrity (<span>${integ}</span>) <span style="color: var(--imp-high); font-weight: bold; margin-left: 8px;">[DEFLECTED]</span>
+                  </div>
+              </div>`;
+              rowDelay += 0.02;
+            }
+          } else {
+            targetLogs += `
+            <div class="log-entry animate-fast-row" style="animation-delay: ${rowDelay}s; opacity: 0;">
+                <div style="display: flex; align-items: center; flex-shrink: 0; min-width: 250px;">
+                    <span style="font-weight: 600; color: var(--text); min-width: 30px;">${origin.chessId}</span> 
+                    ${getSwatch(origin.cultureIndex, origin.moral)}
+                    <svg viewBox="0 0 24 24" width="16" height="16" style="margin: 0 12px; fill: var(--imp-high);"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    <span style="font-weight: 600; color: var(--text); min-width: 30px;">${target.chessId}</span> 
+                    ${getSwatch(target.cultureIndex, target.moral)}
+                </div>
+                <div class="interaction-seq" style="flex-grow: 1;">
+                    Virality (<span>${v}</span>) &lt; Border Imp. (<span>${imp}</span>) <span style="color: var(--imp-high); font-weight: bold; margin-left: 8px;">[BLOCKED]</span>
+                </div>
+            </div>`;
+            rowDelay += 0.02;
+          }
+      }
+    });
+    
+    if (winningOrigin) {
+        changed = true;
+        nextStates[index].cultureIndex = winningOrigin.cultureIndex;
+        nextStates[index].virality = winningOrigin.virality;
+        nextStates[index].integrity = winningOrigin.integrity;
+        nextStates[index].impermeability = winningOrigin.impermeability;
+        nextStates[index].moral = winningOrigin.moral;
+        
+        const v = formatScore(winningOrigin.virality);
+        const imp = formatScore(target.impermeability);
+        const integ = formatScore(target.integrity);
+        
+        targetLogs += `
+        <div class="log-entry animate-fast-row" style="background: rgba(64, 145, 108, 0.04); animation-delay: ${rowDelay}s; opacity: 0;">
+            <div style="display: flex; align-items: center; flex-shrink: 0; min-width: 250px;">
+                <span style="font-weight: 600; color: var(--text); min-width: 30px;">${winningOrigin.chessId}</span> 
+                ${getSwatch(winningOrigin.cultureIndex, winningOrigin.moral)}
+                <svg viewBox="0 0 24 24" width="16" height="16" style="margin: 0 12px; fill: var(--accent);"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                <span style="font-weight: 600; color: var(--text); min-width: 30px;">${target.chessId}</span> 
+                ${getSwatch(target.cultureIndex, target.moral)}
+            </div>
+            <div class="interaction-seq" style="flex-grow: 1;">
+                Virality (<span>${v}</span>) &gt; Border Imp. (<span>${imp}</span>) &gt; Integrity (<span>${integ}</span>) <span style="color: var(--vir-med); font-weight: bold; margin-left: 8px;">[ASSIMILATED]</span>
+            </div>
+        </div>`;
+        rowDelay += 0.02;
+    }
+
+    epochLogs += targetLogs;
+  });
+
+  if (epochLogs !== '') {
+      const logContainer = document.getElementById('interaction-log-container');
+      if (logContainer) {
+          if (simulationEpoch === 1 && logContainer.innerHTML.includes('Awaiting simulation data')) {
+              logContainer.innerHTML = '';
+          }
+          const phaseHTML = `
+              <div class="phase-block" id="phase-block-${simulationEpoch}">
+                  <div class="epoch-header">
+                      <span>Phase ${simulationEpoch}: Interaction Logs</span>
+                  </div>
+                  <div class="phase-logs">
+                      ${epochLogs}
+                  </div>
+              </div>
+          `;
+          logContainer.insertAdjacentHTML('beforeend', phaseHTML);
+          logContainer.scrollTop = logContainer.scrollHeight;
+      }
+  }
+
+  nodes.forEach((n, i) => Object.assign(nodes[i], nextStates[i]));
+  captureEpochState(nodes);
+  updateDisplay();
+  
+  if (!changed) completeSimulation();
+}
+
+function completeSimulation() {
+  isPlaying = false; isCompleted = true;
+  clearInterval(simInterval); simInterval = null;
+  const btn = document.getElementById('scenario-1-btn');
+  const icon = document.getElementById('scenario-icon');
+  btn.classList.remove('playing'); btn.classList.add('completed');
+  btn.lastChild.textContent = ' Completed'; icon.innerHTML = ICONS.check;
+  updateDisplay();
+  updateButtonStates();
+  startChartLoop();
+}
+
+function setSystemLevel(mode) {
+  if (isPlaying) return;
+  if (isCompleted) {
+    currentLevel = mode;
+    randomizeConfiguration();
+    return;
+  }
+  currentLevel = mode; isSimultaneous = true;
+  document.body.classList.add('sim-mode');
+  if (mode === 'basic') { setScale(2); setScoreRange(10); setSpectrum(true); showScores = true; } 
+  else { setScale(4); setScoreRange(100); setSpectrum(true); showScores = true; }
+  updateDisplay();
+}
+
+function interpolateColor(color1, color2, factor) {
+  const hex = (x) => x.toString(16).padStart(2, '0');
+  const r1 = parseInt(color1.substring(1, 3), 16), g1 = parseInt(color1.substring(3, 5), 16), b1 = parseInt(color1.substring(5, 7), 16);
+  const r2 = parseInt(color2.substring(1, 3), 16), g2 = parseInt(color2.substring(3, 5), 16), b2 = parseInt(color2.substring(5, 7), 16);
+  return `#${hex(Math.round(r1 + factor * (r2 - r1)))}${hex(Math.round(g1 + factor * (g2 - g1)))}${hex(Math.round(b1 + factor * (b2 - b1)))}`;
+}
+
+function getSpectrumColor(val, palette, type) {
+  if (type === 'cultures') return palette[val % palette.length];
+  if (!isSpectrum) return val < 33.3 ? palette[0] : (val < 66.6 ? palette[1] : palette[2]); 
+  if (val <= 50) return interpolateColor(palette[0], palette[1], val / 50);
+  return interpolateColor(palette[1], palette[2], (val - 50) / 50);
+}
+
+function isColorDark(hex) {
+  if (!hex || hex === 'transparent' || hex.startsWith('var')) return false;
+  const r = parseInt(hex.substring(1, 3), 16), g = parseInt(hex.substring(3, 5), 16), b = parseInt(hex.substring(5, 7), 16);
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luma < 140; 
+}
+
+function setDensity(mode) {
+    if (mode === 'compact' && activePrimary === 'impermeability' && !isSimultaneous) return;
+    currentDensity = mode;
+    document.getElementById('dens-compact').classList.toggle('active', mode === 'compact');
+    document.getElementById('dens-spatial').classList.toggle('active', mode === 'spatial');
+    initGrids(currentLayers);
+}
+
+function initGrids(layers) {
+  document.body.classList.remove('sim-ready');
+  if (chartAnimFrame) cancelAnimationFrame(chartAnimFrame);
+  chartAnimFrame = null;
+  
+  const meshIds = ['mesh-virality', 'mesh-integrity', 'mesh-impermeability', 'mesh-main', 'mesh-cultures'];
+  const containers = meshIds.map(id => document.getElementById(id));
+  containers.forEach(c => { if(c) c.innerHTML = ''; });
+  nodes = [];
+  phaseHistory = [];
+  proseLog = [];
+  epochHistory = [];
+  simulationEpoch = 0;
+  
+  const hexSize = isSimultaneous ? (15 * (1 + (5 - layers) * 0.35) * 1.1) : (15 * (1 + (5 - layers) * 0.35) * 1.25);
+  const spacingCompact = 1.0; 
+  const spacingSpatial = 1.08;
+  const scaleCompact = 1.0;
+  const scaleSpatial = (layers <= 2 ? 0.92 : (0.91 - ((layers - 3) * 0.03)));
+
+  for (let q = -layers; q <= layers; q++) {
+    for (let r = Math.max(-layers, -q - layers); r <= Math.min(layers, -q + layers); r++) {
+      const cIdx = Math.floor(Math.random()*7);
+      
+      const letter = String.fromCharCode(65 + (q + layers));
+      const number = r + layers + 1;
+      const chessId = `${letter}${number}`;
+
+      const nodeData = { 
+        q, r, chessId,
+        integrity: cultureScores.integrity[cIdx], 
+        impermeability: cultureScores.impermeability[cIdx], 
+        moral: cultureScores.moral[cIdx], 
+        virality: cultureScores.virality[cIdx], 
+        cultureIndex: cIdx, 
+        els: [], circles: [], txt: [] 
+      };
+      meshIds.forEach((id, idx) => {
+        const isImpGrid = id.includes('impermeability');
+        const sFactor = isImpGrid ? spacingSpatial : (currentDensity === 'compact' ? spacingCompact : spacingSpatial);
+        const hScale = isImpGrid ? scaleSpatial : (currentDensity === 'compact' ? scaleCompact : scaleSpatial);
+        const x = hexSize * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r) * sFactor;
+        const y = hexSize * (3 / 2 * r) * sFactor;
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.setAttribute("transform", `translate(${x}, ${y})`);
+        const h = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        const pts = []; for(let a=0; a<6; a++){ const ang = (Math.PI/3)*a + (Math.PI/6); pts.push(`${Math.cos(ang)*hexSize},${Math.sin(ang)*hexSize}`); }
+        h.setAttribute("points", pts.join(" ")); h.setAttribute("class", "hex-cell"); h.setAttribute("transform", `scale(${hScale})`);
+        if (!isImpGrid && currentDensity === 'compact') h.style.strokeWidth = "0.5px";
+        const circ = document.createElementNS("http://www.w3.org/2000/svg", "circle"); circ.setAttribute("r", hexSize * 0.2); circ.setAttribute("class", "hex-circle");
+        const t = document.createElementNS("http://www.w3.org/2000/svg", "text"); t.setAttribute("class", "hex-label");
+        t.style.fontSize = (5.5 * (hexSize/15)) + "px";
+        g.appendChild(h); g.appendChild(circ); g.appendChild(t); containers[idx].appendChild(g);
+        nodeData.els.push(h); nodeData.circles.push(circ); nodeData.txt.push(t);
+      });
+      nodes.push(nodeData);
+    }
+  }
+  initialState = JSON.parse(JSON.stringify(nodes));
+  captureEpochState(initialState);
+  
+  const logContainer = document.getElementById('interaction-log-container');
+  if (logContainer) {
+      logContainer.innerHTML = '<div style="text-align: center; color: #8E8E93; font-style: italic; margin-top: 2rem;">Awaiting simulation data...</div>';
+  }
+
+  updateHTMLWithAnim('combined-prose-container', generatePlaceholderExp(), 'none');
+
+  initCharts();
+  updateDisplay();
+  
+  setTimeout(() => { document.body.classList.add('sim-ready'); }, 50);
+}
+
+function setScoreRange(range) {
+  scoreScale = range;
+  document.getElementById('range-10').classList.toggle('active', range === 10);
+  document.getElementById('range-100').classList.toggle('active', range === 100);
+  updateDisplay();
+}
+
+function formatScore(val) { return scoreScale === 10 ? (val / 10).toFixed(1) : Math.round(val); }
+
+function updateButtonStates() {
+    const primaryIds = { 'cultures': 'btn-cultures', 'moral': 'btn-moral', 'virality': 'btn-virality', 'integrity': 'btn-integrity', 'impermeability': 'btn-imp-main' };
+    const secondaryIds = { 'integrity': 'ovl-integrity', 'virality': 'ovl-virality', 'moral': 'ovl-moral', 'cultures': 'ovl-cultures' };
+    const disabledState = isPlaying;
+    
+    document.getElementById('lvl-basic').classList.toggle('active', currentLevel === 'basic');
+    document.getElementById('lvl-complex').classList.toggle('active', currentLevel === 'complex');
+    
+    document.querySelectorAll('#scale-toggle .segment').forEach(btn => btn.disabled = disabledState);
+    document.querySelectorAll('#level-toggle-sidebar .segment').forEach(btn => btn.disabled = disabledState);
+    
+    const dropdownBtn = document.getElementById('scenario-dropdown-btn');
+    if (dropdownBtn) {
+        dropdownBtn.disabled = disabledState;
+        dropdownBtn.style.opacity = disabledState ? "0.35" : "1";
+        dropdownBtn.style.cursor = disabledState ? "not-allowed" : "pointer";
+    }
+
+    Object.keys(primaryIds).forEach(key => {
+        const btn = document.getElementById(primaryIds[key]);
+        if (btn) btn.classList.toggle('active', !isSimultaneous && activePrimary === key);
+    });
+    Object.keys(secondaryIds).forEach(key => {
+        const btn = document.getElementById(secondaryIds[key]);
+        if (btn) { btn.classList.toggle('active', activeSecondary === key); btn.disabled = isSimultaneous || (!isSimultaneous && activePrimary === key); }
+    });
+    const impBtn = document.getElementById('ovl-impermeability');
+    if (impBtn) { impBtn.classList.toggle('active', isImpOverlayActive); impBtn.disabled = isSimultaneous || (!isSimultaneous && activePrimary === 'impermeability'); }
+    document.getElementById('spec-on').classList.toggle('active', isSpectrum);
+    document.getElementById('spec-off').classList.toggle('active', !isSpectrum);
+    const simToggleGroup = document.getElementById('sim-toggle').children;
+    simToggleGroup[0].classList.toggle('active', isSimultaneous);
+    simToggleGroup[1].classList.toggle('active', !isSimultaneous);
+    const densCompactBtn = document.getElementById('dens-compact');
+    if (!isSimultaneous && activePrimary === 'impermeability') {
+        densCompactBtn.disabled = true; densCompactBtn.style.opacity = "0.3"; densCompactBtn.style.cursor = "not-allowed";
+        document.getElementById('dens-spatial').classList.add('active'); densCompactBtn.classList.remove('active');
+    } else {
+        densCompactBtn.disabled = false; densCompactBtn.style.opacity = "1"; densCompactBtn.style.cursor = "pointer";
+        densCompactBtn.classList.toggle('active', currentDensity === 'compact'); document.getElementById('dens-spatial').classList.toggle('active', currentDensity === 'spatial');
+    }
+}
+
+function drawPieChart(containerId, data, initData = null) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+  const initTotal = initData ? initData.reduce((sum, d) => sum + d.value, 0) : total;
+
+  if (total === 0 && (!initData || initTotal === 0)) { container.innerHTML = '—'; return; }
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "-24 -24 48 48");
+  svg.setAttribute("class", "pie-svg");
+  
+  const tooltip = document.createElement('div');
+  tooltip.className = 'pie-tooltip';
+  container.appendChild(tooltip);
+
+  const stateLabel = document.createElement('div');
+  stateLabel.style.fontFamily = "var(--ff-mono)";
+  stateLabel.style.fontSize = "0.65rem";
+  stateLabel.style.textTransform = "uppercase";
+  stateLabel.style.color = "#8E8E93";
+  stateLabel.style.textAlign = "center";
+  stateLabel.style.marginTop = "0.8rem";
+  stateLabel.style.letterSpacing = "0.15em";
+  stateLabel.style.height = "16px";
+  stateLabel.textContent = initData ? "Initial State" : "Data Rendering";
+  
+  const isBorders = containerId === 'chart-imp-single';
+  const useData = initData ? initData : data;
+  
+  let slices = useData.map((d, i) => {
+     let initP = (d.value / (initTotal || 1));
+     let targetP = (data[i].value / (total || 1));
+     return {
+        label: data[i].label,
+        color: data[i].color,
+        initP, targetP, currentP: initP
+     };
+  });
+
+  let activeHover = null;
+
+  const renderTooltipText = () => {
+     if (!activeHover) return;
+     tooltip.textContent = `${activeHover.label}: ${Math.round(activeHover.currentP * 100)}%`;
+  };
+
+  slices.forEach(slice => {
+      let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("class", "pie-slice-path");
+      path.style.strokeLinejoin = "round";
+
+      if (isBorders) {
+          path.style.fill = "transparent";
+          path.style.stroke = slice.color;
+          path.style.strokeWidth = "1.2";
+      } else {
+          path.style.fill = slice.color;
+          path.style.stroke = "var(--bg)";
+          path.style.strokeWidth = "1";
+      }
+      
+      path.onmouseenter = (e) => { 
+          activeHover = slice;
+          if (isBorders) path.style.strokeWidth = "2";
+          else path.style.opacity = "0.75";
+          tooltip.style.visibility = 'visible';
+          renderTooltipText();
+          
+          const rect = container.getBoundingClientRect();
+          tooltip.style.left = `${e.clientX - rect.left + 12}px`;
+          tooltip.style.top = `${e.clientY - rect.top + 12}px`;
+      };
+      path.onmousemove = (e) => {
+          if (!activeHover) return;
+          const rect = container.getBoundingClientRect();
+          tooltip.style.left = `${e.clientX - rect.left + 12}px`;
+          tooltip.style.top = `${e.clientY - rect.top + 12}px`;
+      };
+      path.onmouseleave = () => {
+          activeHover = null;
+          if (isBorders) path.style.strokeWidth = "1.2";
+          else path.style.opacity = "1";
+          tooltip.style.visibility = 'hidden';
+      };
+      
+      slice.el = path;
+      svg.appendChild(path);
+  });
+
+  container.appendChild(svg);
+  container.appendChild(stateLabel);
+
+  let isEndState = false;
+  let lastToggleTime = performance.now();
+  let currentAnim = null;
+
+  function getDonutWedgePath(startPercent, percent, innerR, outerR, gap = 0) {
+      percent = Math.max(0, Math.min(1, percent));
+      if (percent <= 0.001) return "";
+      
+      if (percent >= 0.999) {
+          return `M 0 -${outerR} A ${outerR} ${outerR} 0 1 1 0 ${outerR} A ${outerR} ${outerR} 0 1 1 0 -${outerR} Z M 0 -${innerR} A ${innerR} ${innerR} 0 1 0 0 ${innerR} A ${innerR} ${innerR} 0 1 0 0 -${innerR} Z`;
+      }
+      
+      const effectiveStart = startPercent + gap / 2;
+      const effectivePercent = Math.max(0, percent - gap);
+      if (effectivePercent <= 0) return "";
+
+      const startAngle = effectiveStart * 2 * Math.PI - Math.PI/2;
+      const endAngle = (effectiveStart + effectivePercent) * 2 * Math.PI - Math.PI/2;
+      const x1 = Math.cos(startAngle) * outerR, y1 = Math.sin(startAngle) * outerR;
+      const x2 = Math.cos(endAngle) * outerR, y2 = Math.sin(endAngle) * outerR;
+      const x3 = Math.cos(endAngle) * innerR, y3 = Math.sin(endAngle) * innerR;
+      const x4 = Math.cos(startAngle) * innerR, y4 = Math.sin(startAngle) * innerR;
+      const largeArc = effectivePercent > 0.5 ? 1 : 0;
+      return `M ${x1} ${y1} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4} Z`;
+  }
+
+  const animate = () => {
+     const elapsed = performance.now() - lastToggleTime;
+     const progress = Math.min(elapsed / 1200, 1);
+     const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+     
+     let acc = 0;
+     const visibleSlices = slices.filter(s => s.currentP > 0.01).length;
+     
+     slices.forEach(slice => {
+         const startP = isEndState ? slice.initP : slice.targetP;
+         const endP = isEndState ? slice.targetP : slice.initP;
+         slice.currentP = initData ? startP + (endP - startP) * ease : slice.targetP;
+         
+         const gap = (isBorders && visibleSlices > 1 && slice.currentP < 0.99) ? 0.08 : 0; 
+         slice.el.setAttribute("d", getDonutWedgePath(acc, slice.currentP, 12, 20, gap));
+         acc += slice.currentP;
+     });
+     
+     renderTooltipText();
+     
+     if (progress < 1) {
+         currentAnim = requestAnimationFrame(animate);
+     }
+  };
+
+  if (initData) {
+    const toggleState = () => {
+      isEndState = !isEndState;
+      lastToggleTime = performance.now();
+      stateLabel.textContent = isEndState ? "End State" : "Initial State";
+      if (currentAnim) cancelAnimationFrame(currentAnim);
+      animate();
+    };
+    
+    setTimeout(toggleState, 100);
+    
+    const intervalId = setInterval(() => {
+        if (!container.contains(svg)) {
+            clearInterval(intervalId);
+            return;
+        }
+        toggleState();
+    }, 2800);
+  } else {
+    stateLabel.textContent = "Initial Conditions";
+    animate();
+  }
+}
+
+function getScenarioDefinition(title) {
+    let defs = [];
+    if (title.includes("Utopian Takeover")) defs.push("Absolute global harmony under a single culture.");
+    else if (title.includes("Utopian Hegemony")) defs.push("Absolute global harmony under a single culture in its final stabilized form.");
+    else if (title.includes("Dystopian Takeover")) defs.push("Totalitarian control by a single culture.");
+    else if (title.includes("Dystopian Hegemony")) defs.push("Totalitarian control by a single culture in its final stabilized form.");
+    else if (title.includes("Mono Cultural Takeover")) {
+        if (title.includes("Resistant Enclaves")) defs.push("One culture controls the majority of the map, though small pockets of resistance endure.");
+        else defs.push("A single culture has entirely assimilated the map.");
+    }
+    else if (title.includes("Mono Cultural Hegemony")) {
+        if (title.includes("Resistant Enclaves")) defs.push("One culture permanently wields overwhelming influence, though marginal resistance remains.");
+        else defs.push("A single dominant culture wields overwhelming permanent influence over the board.");
+    }
+    else if (title.includes("Meta Utopian Uplift")) defs.push("A peaceful, prosperous world shared by multiple distinct cultures.");
+    else if (title.includes("Meta Dystopian Downfall")) defs.push("The entire world has collapsed into a harsh dystopia across various fractured cultures.");
+    else if (title.includes("Meta Utopian Enclosure")) defs.push("A highly fragmented map that maintains an overall utopian standard despite pockets of dystopia.");
+    else if (title.includes("Meta Dystopian Enclosure")) defs.push("A highly fragmented, unstable map with no single culture able to establish dominance.");
+    
+    if (title.includes("Cultural Collapse")) defs.push("The fundamental integrity of the surviving societies has critically broken down.");
+    
+    return defs.length > 0 ? defs.join(" ") : "The civilizations have reached a stabilized cultural deadlock.";
+}
+
+let combinedInitArray = [];
+let combinedEndArray = [];
+let combinedShiftArray = [];
+
+function updateCulturalAnalytics() {
+  if (!initialState || nodes.length === 0) return;
+  const totalNodes = nodes.length;
+
+  const formatCellWithKey = (label, color, count = null, opacity = 1, isBorder = false) => {
+    const countDisplay = count !== null ? `<span style="color: var(--text); font-weight: 600; min-width: 24px; text-align: left;">${count}</span>` : `<span style="min-width: 24px;"></span>`;
+    
+    const swatchHtml = isBorder
+        ? `<svg width="12" height="14" viewBox="0 0 16 18" style="flex-shrink: 0; overflow: visible; margin-top: 1px;"><polygon points="8,1 15,5 15,13 8,17 1,13 1,5" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/></svg>`
+        : `<div style="width: 10px; height: 12px; background: ${color}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); flex-shrink: 0; margin-right: 2px; margin-top: 1px;"></div>`;
+
+    return `
+      <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; opacity: ${opacity}; font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; height: 18px; width: 100%;">
+        ${countDisplay}
+        ${swatchHtml}
+        <span style="line-height: 1.3; color:#8E8E93; white-space: nowrap;">${label}</span>
+      </div>`;
+  };
+
+  const getShiftDiv = (initVal, endVal, opacity = 1) => {
+    const diff = endVal - initVal;
+    let color = '#8E8E93';
+    let sign = '';
+    if (diff > 0) { color = '#40916C'; sign = '+'; }
+    else if (diff < 0) { color = '#A64B35'; }
+    else if (diff === 0) { return `<div style="height: 18px; margin-bottom: 8px; opacity: ${opacity}; font-family: var(--ff-mono); font-size: 0.85rem; color: #8E8E93; line-height: 1.3; display: flex; align-items: flex-start; font-weight: 600;">(0)</div>`; }
+    return `<div style="height: 18px; margin-bottom: 8px; opacity: ${opacity}; font-family: var(--ff-mono); font-size: 0.85rem; color: ${color}; line-height: 1.3; display: flex; align-items: flex-start; font-weight: 600;">(${sign}${diff})</div>`;
+  };
+
+  const getCategorizedCounts = (dataset, key) => {
+    let counts = { high: 0, med: 0, low: 0 };
+    dataset.forEach(n => {
+      const val = n[key];
+      if (val >= 67) counts.high++;
+      else if (val <= 33) counts.low++;
+      else counts.med++;
+    });
+    return counts;
+  };
+
+  const getStatText = (config, initC, endC) => {
+      const highDiff = endC.high - initC.high;
+      const medDiff = endC.med - initC.med;
+      const lowDiff = endC.low - initC.low;
+      const metricName = config.metricName.toLowerCase();
+      const highLabel = config.labels[0].toLowerCase();
+      const medLabel = config.labels[1].toLowerCase();
+      const lowLabel = config.labels[2].toLowerCase();
+      
+      let parts = [];
+      if (highDiff !== 0) parts.push(`<strong>${highDiff > 0 ? '+' : ''}${highDiff}</strong> ${highLabel}`);
+      if (medDiff !== 0) parts.push(`<strong>${medDiff > 0 ? '+' : ''}${medDiff}</strong> ${medLabel}`);
+      if (lowDiff !== 0) parts.push(`<strong>${lowDiff > 0 ? '+' : ''}${lowDiff}</strong> ${lowLabel}`);
+
+      let diffText = "";
+      if (parts.length === 0) diffText = `The distribution of ${metricName} remained completely stable with no net changes.`;
+      else if (parts.length === 1) diffText = `The only change in ${metricName} was a shift of ${parts[0]} regions.`;
+      else if (parts.length === 2) diffText = `Net changes in ${metricName} consisted of ${parts[0]} regions and ${parts[1]} regions.`;
+      else diffText = `Net changes in ${metricName} consisted of ${parts[0]} regions, ${parts[1]} regions, and ${parts[2]} regions.`;
+
+      let initialPhrase = config.key === 'moral' ? 
+        `The simulation began with <strong>${initC.high}</strong> regions holding a ${highLabel} ${metricName}, <strong>${initC.med}</strong> with a ${medLabel} status, and <strong>${initC.low}</strong> with a ${lowLabel} status.` :
+        `The simulation began with <strong>${initC.high}</strong> regions showing ${highLabel} ${metricName}, <strong>${initC.med}</strong> with ${medLabel} levels, and <strong>${initC.low}</strong> with ${lowLabel} levels.`;
+      
+      let endPhrase = config.key === 'moral' ? 
+        `By the end of the simulation, the distribution shifted to <strong>${endC.high}</strong> regions with a ${highLabel} ${metricName}, <strong>${endC.med}</strong> with a ${medLabel} status, and <strong>${endC.low}</strong> with a ${lowLabel} status.` :
+        `By the end of the simulation, the distribution shifted to <strong>${endC.high}</strong> regions demonstrating ${highLabel} ${metricName}, <strong>${endC.med}</strong> with ${medLabel} levels, and <strong>${endC.low}</strong> with ${lowLabel} levels.`;
+
+      return { init: initialPhrase, end: endPhrase, shift: diffText };
+  };
+
+  combinedInitArray = [];
+  combinedEndArray = [];
+  combinedShiftArray = [];
+
+  const renderStatRow = (id, config, initC, endC) => {
+     const data = [
+       { label: config.labels[0], color: config.colors[0], initCount: initC.high, endCount: isCompleted ? endC.high : null },
+       { label: config.labels[1], color: config.colors[1], initCount: initC.med, endCount: isCompleted ? endC.med : null },
+       { label: config.labels[2], color: config.colors[2], initCount: initC.low, endCount: isCompleted ? endC.low : null }
+     ];
+     
+     data.sort((a, b) => isCompleted ? b.endCount - a.endCount : b.initCount - a.initCount);
+
+     updateHTMLWithAnim(`cell-${id}-init`, data.map(d => formatCellWithKey(d.label, d.color, d.initCount, 1, config.isBorder)).join(''), 'pulse');
+     
+     if (isCompleted) {
+       updateHTMLWithAnim(`cell-${id}-end`, data.map(d => formatCellWithKey(d.label, d.color, d.endCount, 1, config.isBorder)).join(''), 'pulse');
+       updateHTMLWithAnim(`cell-${id}-shift`, data.map(d => getShiftDiv(d.initCount, d.endCount)).join(''), 'pulse');
+       
+       const texts = getStatText(config, initC, endC);
+       combinedInitArray.push(texts.init);
+       combinedEndArray.push(texts.end);
+       combinedShiftArray.push(texts.shift);
+     } else {
+       updateHTMLWithAnim(`cell-${id}-end`, '—', 'pulse');
+       updateHTMLWithAnim(`cell-${id}-shift`, '—', 'pulse');
+     }
+
+     const initPieData = [
+       { label: config.labels[0], value: initC.high, color: config.colors[0] },
+       { label: config.labels[1], value: initC.med, color: config.colors[1] },
+       { label: config.labels[2], value: initC.low, color: config.colors[2] }
+     ];
+
+     if (!isCompleted) {
+        drawPieChart(`chart-${id}-single`, initPieData);
+     } else {
+        const endPieData = [
+          { label: config.labels[0], value: endC.high, color: config.colors[0] },
+          { label: config.labels[1], value: endC.med, color: config.colors[1] },
+          { label: config.labels[2], value: endC.low, color: config.colors[2] }
+        ];
+        drawPieChart(`chart-${id}-single`, endPieData, initPieData);
+     }
+  };
+
+  let uCount = 0, dCount = 0, iSum = 0;
+  let nCount = 0, uMoralSum = 0, dMoralSum = 0, nMoralSum = 0;
+  const cultStats = {};
+  CULTURE_NAMES.forEach((name, i) => cultStats[name] = { count: 0, moralSum: 0, index: i });
+
+  let totalVir = 0, totalImp = 0, totalInteg = 0;
+  nodes.forEach(n => {
+      if (n.moral >= 67) { uCount++; uMoralSum += n.moral; }
+      else if (n.moral <= 33) { dCount++; dMoralSum += n.moral; }
+      else { nCount++; nMoralSum += n.moral; }
+      iSum += n.integrity;
+      
+      const cName = CULTURE_NAMES[n.cultureIndex];
+      cultStats[cName].count++;
+      cultStats[cName].moralSum += n.moral;
+      
+      totalVir += n.virality;
+      totalImp += n.impermeability;
+      totalInteg += n.integrity;
+  });
+
+  const uPercent = (uCount / totalNodes) * 100;
+  const dPercent = (dCount / totalNodes) * 100;
+  const nPercent = (nCount / totalNodes) * 100;
+  const iAvg = iSum / totalNodes;
+
+  const uAvgStr = uCount > 0 ? formatScore(uMoralSum / uCount) : formatScore(0);
+  const nAvgStr = nCount > 0 ? formatScore(nMoralSum / nCount) : formatScore(0);
+  const dAvgStr = dCount > 0 ? formatScore(dMoralSum / dCount) : formatScore(0);
+
+  const sortedCults = Object.entries(cultStats)
+      .filter(([_, data]) => data.count > 0)
+      .sort((a, b) => b[1].count - a[1].count);
+      
+  const cMaxPercent = sortedCults.length > 0 ? (sortedCults[0][1].count / totalNodes) * 100 : 0;
+  
+  let totalMoralSum = 0;
+  nodes.forEach(n => { totalMoralSum += n.moral; });
+  const overallMoralAvg = totalMoralSum / totalNodes;
+
+  let scenarios = [];
+  if (cMaxPercent === 100) {
+      if (uPercent === 100) scenarios.push(isCompleted ? "Utopian Hegemony" : "Utopian Takeover");
+      else if (dPercent === 100) scenarios.push(isCompleted ? "Dystopian Hegemony" : "Dystopian Takeover");
+      else scenarios.push(isCompleted ? "Mono Cultural Hegemony" : "Mono Cultural Takeover");
+  } else {
+      if (uPercent === 100) scenarios.push("Meta Utopian Uplift");
+      else if (dPercent === 100) scenarios.push("Meta Dystopian Downfall");
+      
+      if (cMaxPercent > 50 && cMaxPercent < 75) scenarios.push(isCompleted ? "Mono Cultural Hegemony with Resistant Enclaves" : "Mono Cultural Takeover with Resistant Enclaves");
+      else if (cMaxPercent <= 50) {
+          if (overallMoralAvg >= 67) scenarios.push("Meta Utopian Enclosure with Dystopian Enclaves");
+          else scenarios.push("Meta Dystopian Enclosure");
+      }
+      else if (cMaxPercent >= 75) scenarios.push(isCompleted ? "Mono Cultural Hegemony" : "Mono Cultural Takeover");
+  }
+
+  if (iAvg < 33.3) scenarios.push("Cultural Collapse");
+
+  let currentScenarioTitle = "";
+  if (scenarios.length === 1) {
+      currentScenarioTitle = scenarios[0];
+  } else if (scenarios.length === 2) {
+      currentScenarioTitle = scenarios[0] + " and " + scenarios[1];
+  } else if (scenarios.length > 2) {
+      currentScenarioTitle = scenarios.slice(0, -1).join(" and ") + " and " + scenarios[scenarios.length - 1];
+  }
+
+  const getMoralLabel = (avg) => {
+      if (avg >= 67) return 'Utopian';
+      if (avg <= 33) return 'Dystopian';
+      return 'Notopian';
+  };
+  
+  const getNounMoralLabel = (avg) => {
+      if (avg >= 67) return 'Utopia';
+      if (avg <= 33) return 'Dystopia';
+      return 'Notopia';
+  };
+
+  const overallMoralLabel = getMoralLabel(overallMoralAvg);
+
+  const getMaxCulture = (statKey) => {
+      let maxVal = -1;
+      let maxIdx = -1;
+      cultureScores[statKey].forEach((val, idx) => {
+          if (val > maxVal) { maxVal = val; maxIdx = idx; }
+      });
+      return { name: CULTURE_NAMES[maxIdx], color: PASTEL_RAINBOW[maxIdx], score: formatScore(maxVal), rawScore: maxVal };
+  };
+
+  const getMinCulture = (statKey) => {
+      let minVal = Infinity;
+      let minIdx = -1;
+      cultureScores[statKey].forEach((val, idx) => {
+          if (val < minVal) { minVal = val; minIdx = idx; }
+      });
+      return { name: CULTURE_NAMES[minIdx], color: PASTEL_RAINBOW[minIdx], score: formatScore(minVal), rawScore: minVal };
+  };
+
+  const avgVirality = totalVir / totalNodes;
+  const avgImp = totalImp / totalNodes;
+  const avgInteg = totalInteg / totalNodes;
+
+  const maxMoral = getMaxCulture('moral');
+  const minMoral = getMinCulture('moral');
+
+  const avgVirFill = getSpectrumColor(avgVirality, paletteMap['virality'], 'virality');
+  const avgImpFill = getSpectrumColor(avgImp, paletteMap['impermeability'], 'impermeability');
+  const avgIntegFill = getSpectrumColor(avgInteg, paletteMap['integrity'], 'integrity');
+  const maxMoralFill = getSpectrumColor(maxMoral.rawScore, paletteMap['moral'], 'moral');
+  const minMoralFill = getSpectrumColor(minMoral.rawScore, paletteMap['moral'], 'moral');
+
+  const maxVirality = getMaxCulture('virality');
+  const maxImp = getMaxCulture('impermeability');
+  const maxInteg = getMaxCulture('integrity');
+
+  const minVirality = getMinCulture('virality');
+  const minImp = getMinCulture('impermeability');
+  const minInteg = getMinCulture('integrity');
+
+  const baseStroke = document.body.classList.contains('dark-mode') ? "#3A3A3C" : "#E2DDD1";
+
+  // LOCKED: Major Metrics Items Generator
+  const createMetricItem = (title, name, displayVal, type, metricColor, cultureColor) => {
+      const radius = 22; 
+      const pts = []; 
+      for(let a=0; a<6; a++){ 
+          const ang = (Math.PI/3)*a + (Math.PI/6); 
+          pts.push(`${Math.cos(ang)*radius},${Math.sin(ang)*radius}`); 
+      }
+      const polygonPoints = pts.join(" ");
+      
+      let fill = metricColor;
+      let stroke = baseStroke;
+      let strokeW = "1.5px";
+      let textColor = isColorDark(fill) ? "#FFFFFF" : "#1A1A1A";
+
+      if (type === 'impermeability') {
+          fill = "transparent";
+          stroke = metricColor;
+          strokeW = "4px";
+          textColor = "var(--text)";
+      } else if (type === 'moral') {
+          fill = metricColor;
+          stroke = baseStroke;
+          strokeW = "1.5px";
+          textColor = isColorDark(fill) ? "#FFFFFF" : "#1A1A1A";
+      } else if (type === 'cultures') {
+          fill = metricColor;
+          stroke = baseStroke;
+          strokeW = "1.5px";
+          textColor = isColorDark(fill) ? "#FFFFFF" : "#1A1A1A";
+      }
+
+      const hexSvg = `
+      <svg viewBox="-26 -26 52 52" width="52" height="52" style="overflow: visible;">
+          <polygon points="${polygonPoints}" fill="${fill}" stroke="${stroke}" stroke-width="${strokeW}" stroke-linejoin="round" />
+          <text x="0" y="1" text-anchor="middle" dominant-baseline="middle" font-family="var(--ff-mono)" font-weight="500" font-size="13px" fill="${textColor}">${displayVal}</text>
+      </svg>`;
+
+      const cultureDot = (type !== 'moral' && type !== 'cultures' && cultureColor) ? `<div style="width: 10px; height: 12px; background: ${cultureColor}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); flex-shrink: 0; margin-right: 6px; margin-top: 1px;"></div>` : '';
+
+      return `
+      <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+              ${hexSvg}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-family: var(--ff-mono); font-size: 0.65rem; text-transform: uppercase; color: #8E8E93; letter-spacing: 0.05em; line-height: 1;">${title}</div>
+              <div style="display: flex; align-items: center;">
+                  ${cultureDot}
+                  <div style="font-family: var(--ff-serif); font-size: 1.25rem; font-weight: 600; color: var(--text); line-height: 1.1;">${name}</div>
+              </div>
+          </div>
+      </div>
+      `;
+  };
+
+  const endDomStat = sortedCults.length > 0 ? sortedCults[0][1] : null;
+  const domCultureMoralAvg = endDomStat ? endDomStat.moralSum / endDomStat.count : 0;
+  const domCultureStatus = getMoralLabel(domCultureMoralAvg);
+  const domCultureMoralFill = getSpectrumColor(domCultureMoralAvg, paletteMap['moral'], 'moral');
+
+  const overallMoralFill = getSpectrumColor(overallMoralAvg, paletteMap['moral'], 'moral');
+  const virFill = getSpectrumColor(maxVirality.rawScore, paletteMap['virality'], 'virality');
+  const impFill = getSpectrumColor(maxImp.rawScore, paletteMap['impermeability'], 'impermeability');
+  const integFill = getSpectrumColor(maxInteg.rawScore, paletteMap['integrity'], 'integrity');
+  
+  const minVirFill = getSpectrumColor(minVirality.rawScore, paletteMap['virality'], 'virality');
+  const minImpFill = getSpectrumColor(minImp.rawScore, paletteMap['impermeability'], 'impermeability');
+  const minIntegFill = getSpectrumColor(minInteg.rawScore, paletteMap['integrity'], 'integrity');
+
+  const domCultureHex = sortedCults.length > 0 ? sortedCults[0][0] : "None";
+  const domCultureCol = sortedCults.length > 0 ? PASTEL_RAINBOW[sortedCults[0][1].index] : "var(--bg)";
+  const domCulturePct = sortedCults.length > 0 ? Math.round((sortedCults[0][1].count / totalNodes) * 100) + "%" : "0%";
+
+  // LOCKED: Major Metrics HTML Generation
+  const majorMetricsHTML = `
+    <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;">Major Metrics</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem 1.5rem; padding-left: 0.5rem;">
+        <div style="grid-column: 1;">
+           ${createMetricItem("Dominant Culture", domCultureHex, domCulturePct, 'cultures', domCultureCol)}
+        </div>
+        <div style="grid-column: 2;">
+           ${createMetricItem("Dominant Status", domCultureStatus, formatScore(domCultureMoralAvg), 'moral', domCultureMoralFill)}
+        </div>
+        <div style="grid-column: 3;">
+           ${createMetricItem("Meta-Topia Status", overallMoralLabel, formatScore(overallMoralAvg), 'moral', overallMoralFill)}
+        </div>
+
+        ${createMetricItem("Peak Sub-topia", maxMoral.name, formatScore(maxMoral.rawScore), 'moral', maxMoralFill, maxMoral.color)}
+        ${createMetricItem("Valley Sub-topia", minMoral.name, formatScore(minMoral.rawScore), 'moral', minMoralFill, minMoral.color)}
+        ${createMetricItem("Average Sub-topia", "Global Avg", formatScore(overallMoralAvg), 'moral', overallMoralFill, null)}
+
+        ${createMetricItem("Peak Virality", maxVirality.name, formatScore(maxVirality.rawScore), 'virality', virFill, maxVirality.color)}
+        ${createMetricItem("Valley Virality", minVirality.name, formatScore(minVirality.rawScore), 'virality', minVirFill, minVirality.color)}
+        ${createMetricItem("Average Virality", "Global Avg", formatScore(avgVirality), 'virality', avgVirFill, null)}
+        
+        ${createMetricItem("Peak Impermeability", maxImp.name, formatScore(maxImp.rawScore), 'impermeability', impFill, maxImp.color)}
+        ${createMetricItem("Valley Impermeability", minImp.name, formatScore(minImp.rawScore), 'impermeability', minImpFill, minImp.color)}
+        ${createMetricItem("Avg Impermeability", "Global Avg", formatScore(avgImp), 'impermeability', avgImpFill, null)}
+        
+        ${createMetricItem("Peak Integrity", maxInteg.name, formatScore(maxInteg.rawScore), 'integrity', integFill, maxInteg.color)}
+        ${createMetricItem("Valley Integrity", minInteg.name, formatScore(minInteg.rawScore), 'integrity', minIntegFill, minInteg.color)}
+        ${createMetricItem("Average Integrity", "Global Avg", formatScore(avgInteg), 'integrity', avgIntegFill, null)}
+    </div>
+  `;
+  updateHTMLWithAnim('overview-major-metrics', majorMetricsHTML, 'none');
+
+  let dominantHTML = `
+      <div style="display: flex; gap: 2.5rem; margin-bottom: 3.5rem; flex-wrap: wrap;">
+          <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 160px;">
+              <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em;">Utopian</div>
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                  <div style="width: 20px; height: 23px; background: var(--moral-uto); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                  <span><strong>${Math.round(uPercent)}%</strong> <span style="color: #8E8E93; font-size: 1.2rem; font-style: italic;">— Avg Rating: ${uAvgStr}</span></span>
+              </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 160px;">
+              <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em;">Dystopian</div>
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                  <div style="width: 20px; height: 23px; background: var(--moral-dys); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); border: 1px solid rgba(142, 142, 147, 0.2);"></div>
+                  <span><strong>${Math.round(dPercent)}%</strong> <span style="color: #8E8E93; font-size: 1.2rem; font-style: italic;">— Avg Rating: ${dAvgStr}</span></span>
+              </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 160px;">
+              <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em;">Notopian</div>
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                  <div style="width: 20px; height: 23px; background: var(--moral-neu); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                  <span><strong>${Math.round(nPercent)}%</strong> <span style="color: #8E8E93; font-size: 1.2rem; font-style: italic;">— Avg Rating: ${nAvgStr}</span></span>
+              </div>
+          </div>
+      </div>
+  `;
+
+  dominantHTML += `<div style="display: flex; gap: 2.5rem; margin-bottom: 3.5rem; flex-wrap: wrap;">`;
+  const topTitles = ["Dominant Culture", "Secondary Culture", "Tertiary Culture"];
+  
+  for (let k = 0; k < Math.min(3, sortedCults.length); k++) {
+      const [name, data] = sortedCults[k];
+      const percent = Math.round((data.count / totalNodes) * 100);
+      const moralAvg = data.moralSum / data.count;
+      const nounStatus = getNounMoralLabel(moralAvg);
+      
+      let statusColor = 'var(--moral-neu)';
+      if (moralAvg >= 67) statusColor = 'var(--moral-uto)';
+      else if (moralAvg <= 33) statusColor = 'var(--moral-dys)';
+
+      dominantHTML += `
+          <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 160px;">
+              <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em;">${topTitles[k]}</div>
+              <div style="display: flex; align-items: center; gap: 32px; font-size: 1.4rem;">
+                  <div style="display: flex; gap: 4px;">
+                      <div style="width: 20px; height: 23px; background: ${PASTEL_RAINBOW[data.index]}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                      <div style="width: 20px; height: 23px; background: ${statusColor}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                  </div>
+                  <span><strong>${percent}%</strong> ${name} &mdash; ${nounStatus}</span>
+              </div>
+          </div>
+      `;
+  }
+  dominantHTML += `</div>`;
+
+  dominantHTML += `
+    <div style="font-family: var(--ff-mono); font-size: 0.75rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">Complete Cultural Distribution</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem;">
+  `;
+
+  sortedCults.forEach(([name, data]) => {
+      const percent = Math.round((data.count / totalNodes) * 100);
+      const moralAvg = data.moralSum / data.count;
+      const nounStatus = getNounMoralLabel(moralAvg);
+      
+      let statusColor = 'var(--moral-neu)';
+      if (moralAvg >= 67) statusColor = 'var(--moral-uto)';
+      else if (moralAvg <= 33) statusColor = 'var(--moral-dys)';
+
+      dominantHTML += `
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 1.05rem;">
+              <div style="display: flex; gap: 4px;">
+                  <div style="width: 14px; height: 16px; background: ${PASTEL_RAINBOW[data.index]}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+                  <div style="width: 14px; height: 16px; background: ${statusColor}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+              </div>
+              <span><strong>${percent}%</strong> ${name} &mdash; ${nounStatus}</span>
+          </div>
+      `;
+  });
+
+  dominantHTML += `</div>`;
+  updateHTMLWithAnim('overview-dominant-cultures', dominantHTML, 'none');
+
+  const currentScenarioDesc = getScenarioDefinition(currentScenarioTitle);
+
+  if (simulationEpoch === 0) {
+      updateHTMLWithAnim('scenario-title-label', 'Initial State', 'none');
+      updateHTMLWithAnim('scenario-main-title', `<strong>${currentScenarioTitle}</strong>`, 'none');
+      updateHTMLWithAnim('scenario-main-desc', currentScenarioDesc, 'none');
+  } else {
+      updateHTMLWithAnim('scenario-main-title', `<strong>${currentScenarioTitle}</strong>`, 'none');
+      if (isCompleted) {
+          updateHTMLWithAnim('scenario-title-label', 'Terminal State', 'none');
+          updateHTMLWithAnim('scenario-main-desc', currentScenarioDesc, 'none');
+      } else {
+          updateHTMLWithAnim('scenario-title-label', 'Current Trajectory', 'none');
+          updateHTMLWithAnim('scenario-main-desc', '', 'none');
+      }
+  }
+
+  const initMoral = getCategorizedCounts(initialState, 'moral');
+  const endMoral = getCategorizedCounts(nodes, 'moral');
+  renderStatRow('moral', { metricName: 'Sub-topia Status', colors: ['var(--moral-uto)', 'var(--moral-neu)', 'var(--moral-dys)'], labels: ["UTOPIAN", "NOTOPIAN", "DYSTOPIAN"] }, initMoral, endMoral);
+
+  const statsConfig = {
+    'vir': { key: 'virality', metricName: 'Memetic Virality', colors: ['var(--vir-high)', 'var(--vir-med)', 'var(--vir-low)'], labels: ["HIGH", "MED", "LOW"] },
+    'imp': { key: 'impermeability', metricName: 'Border Impermeability', colors: ['var(--imp-high)', 'var(--imp-med)', 'var(--imp-low)'], labels: ["HIGH", "MED", "LOW"], isBorder: true },
+    'integ': { key: 'integrity', metricName: 'Cultural Integrity', colors: ['#FDE68A', '#E6994D', '#E68A73'], labels: ["HIGH", "MED", "LOW"] }
+  };
+
+  Object.keys(statsConfig).forEach(id => {
+    const config = statsConfig[id];
+    const initC = getCategorizedCounts(initialState, config.key);
+    const endC = getCategorizedCounts(nodes, config.key);
+    renderStatRow(id, config, initC, endC);
+  });
+
+  const initCounts = {};
+  const endCountsRaw = {};
+  
+  initialState.forEach(n => { 
+    const name = CULTURE_NAMES[n.cultureIndex]; 
+    if (!initCounts[name]) initCounts[name] = { count: 0, moralSum: 0, index: n.cultureIndex };
+    initCounts[name].count++;
+    initCounts[name].moralSum += n.moral;
+  });
+  nodes.forEach(n => { 
+    const name = CULTURE_NAMES[n.cultureIndex]; 
+    endCountsRaw[name] = (endCountsRaw[name] || 0) + 1; 
+  });
+
+  let displayCults = [];
+  if (!isCompleted) {
+      displayCults = Object.entries(initCounts).sort((a, b) => b[1].count - a[1].count).map(e => ({name: e[0], index: e[1].index, initCount: e[1].count, endCount: null}));
+  } else {
+      displayCults = Object.entries(initCounts).map(e => ({
+          name: e[0], 
+          index: e[1].index, 
+          initCount: e[1].count, 
+          endCount: endCountsRaw[e[0]] || 0
+      })).sort((a, b) => b.endCount - a.endCount);
+  }
+
+  updateHTMLWithAnim('cell-cult-init', displayCults.map(d => formatCellWithKey(d.name, PASTEL_RAINBOW[d.index], d.initCount, d.initCount === 0 ? 0.4 : 1)).join(''), 'pulse');
+  
+  const cultPieInitData = CULTURE_NAMES.map((name, i) => ({ label: name, value: initCounts[name] ? initCounts[name].count : 0, color: PASTEL_RAINBOW[i] }));
+
+  if (!isCompleted) {
+    updateHTMLWithAnim('cell-cult-end', '—', 'pulse');
+    updateHTMLWithAnim('cell-cult-shift', '—', 'pulse');
+    drawPieChart('chart-cult-single', cultPieInitData);
+  } else {
+    updateHTMLWithAnim('cell-cult-end', displayCults.map(d => formatCellWithKey(d.name, PASTEL_RAINBOW[d.index], d.endCount, d.endCount === 0 ? 0.4 : 1)).join(''), 'pulse');
+    updateHTMLWithAnim('cell-cult-shift', displayCults.map(d => getShiftDiv(d.initCount, d.endCount, d.endCount === 0 && d.initCount === 0 ? 0.4 : 1)).join(''), 'pulse');
+
+    const top = displayCults[0];
+    const topInit = [...displayCults].sort((a,b)=> b.initCount - a.initCount)[0];
+    
+    // Cultural Affiliation Texts
+    let initCults = [...displayCults].filter(d => d.initCount > 0).sort((a,b) => b.initCount - a.initCount);
+    let initParts = initCults.map(c => `<strong>${c.name}</strong> (${c.initCount})`);
+    let initText = "";
+    if(initParts.length === 1) initText = `The map started as a complete monolith, with ${initParts[0]} controlling all regions.`;
+    else if (initParts.length === 2) initText = `Initially, the map was divided between ${initParts[0]} and ${initParts[1]}.`;
+    else {
+        const lastInit = initParts.pop();
+        initText = `Initially, the map was divided among ${initParts.join(', ')}, and ${lastInit}.`;
+    }
+    combinedInitArray.unshift(initText);
+
+    let endCults = [...displayCults].filter(d => d.endCount > 0).sort((a,b) => b.endCount - a.endCount);
+    let endParts = endCults.map(c => `<strong>${c.name}</strong> (${c.endCount})`);
+    let endText = "";
+    if(endParts.length === 1) endText = `By the end, ${endParts[0]} achieved total hegemony, controlling all regions.`;
+    else if (endParts.length === 2) endText = `By the end, only ${endParts[0]} and ${endParts[1]} remained.`;
+    else {
+        const lastEnd = endParts.pop();
+        endText = `By the end, surviving cultures included ${endParts.join(', ')}, and ${lastEnd}.`;
+    }
+    
+    if (endCults.length < initCults.length) {
+        endText += ` All other cultures were eliminated.`;
+    }
+    combinedEndArray.unshift(endText);
+
+    let shiftParts = [];
+    endCults.forEach(c => {
+        const diff = c.endCount - c.initCount;
+        if (diff !== 0) {
+            shiftParts.push(`<strong>${c.name}</strong> saw a net shift of <strong>${diff > 0 ? '+' : ''}${diff}</strong> regions`);
+        } else {
+            shiftParts.push(`<strong>${c.name}</strong> maintained their original count of <strong>${c.initCount}</strong> regions`);
+        }
+    });
+    let shiftText = "";
+    if (shiftParts.length === 1) shiftText = `${shiftParts[0]}.`;
+    else if (shiftParts.length === 2) shiftText = `${shiftParts[0]}, while ${shiftParts[1]}.`;
+    else {
+        const lastShift = shiftParts.pop();
+        shiftText = `${shiftParts.join(', ')}, and ${lastShift}.`;
+    }
+    combinedShiftArray.unshift(`Throughout the simulation, ${shiftText}`);
+
+    const topEndColor = PASTEL_RAINBOW[top.index];
+
+    let combinedProseArray = [];
+    for (let i = 0; i < 5; i++) {
+        let content = `
+            <div style="margin-bottom: 0.8rem;">
+                <span style="font-family: var(--ff-mono); font-size: 0.65rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.2rem;">Initial State</span>
+                ${combinedInitArray[i]}
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <span style="font-family: var(--ff-mono); font-size: 0.65rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.2rem;">End State</span>
+                ${combinedEndArray[i]}
+            </div>
+            <div>
+                <span style="font-family: var(--ff-mono); font-size: 0.65rem; color: #8E8E93; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.2rem;">Total Shift</span>
+                ${combinedShiftArray[i]}
+            </div>
+        `;
+        combinedProseArray.push(content);
+    }
+    
+    // Order: Affiliation, Status, Virality, Impermeability, Integrity
+    const reorderedProse = [combinedProseArray[0], combinedProseArray[1], combinedProseArray[2], combinedProseArray[4], combinedProseArray[3]];
+
+    const expCulturesFormatted = `
+        <div class="wb-row" style="display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 1.5rem; width: 100%;">
+            ${formatSection(reorderedProse, topEndColor)}
+        </div>
+    `;
+
+    updateHTMLWithAnim('combined-prose-container', expCulturesFormatted, 'fade');
+
+    const cultPieEndData = CULTURE_NAMES.map((name, i) => ({ label: name, value: endCountsRaw[name] || 0, color: PASTEL_RAINBOW[i] }));
+    drawPieChart('chart-cult-single', cultPieEndData, cultPieInitData);
+  }
+
+  const getAvgsAt = (eIdx) => {
+     if(!epochHistory || epochHistory.length === 0) return { moral: 0, vir: 0, imp: 0, integ: 0 };
+     const target = epochHistory[Math.min(eIdx, epochHistory.length - 1)];
+     return { moral: target.avgs.moral, vir: target.avgs.virality, imp: target.avgs.impermeability, integ: target.avgs.integrity };
+  };
+  
+  const initA = getAvgsAt(0);
+  const curA = getAvgsAt(simulationEpoch);
+  const integDiff = curA.integ - initA.integ;
+
+  let initDomText = "";
+  if (displayCults.length > 0) {
+    const domName = displayCults[0].name;
+    const domPct = Math.round((displayCults[0].initCount / totalNodes) * 100);
+    const initStat = initCounts[domName];
+    const domMoral = getMoralLabel(initStat.moralSum / initStat.count);
+    initDomText = `The geopolitical landscape begins with <strong>${domName}</strong> exerting primary influence over ${domPct}% of the topology. This establishes a foundational <strong>${domMoral.toLowerCase()}</strong> societal baseline.`;
+    if (displayCults.length > 1) {
+      const secName = displayCults[1].name;
+      const secPct = Math.round((displayCults[1].initCount / totalNodes) * 100);
+      initDomText += ` Resistance from <strong>${secName}</strong> at ${secPct}% introduces the initial cultural friction.`;
+    }
+  }
+
+  let transProseHTML = "";
+  let transPhaseStr = "";
+  let endProseHTML = "";
+  let endPhaseStr = "";
+
+  if (phaseHistory.length === 0) {
+      phaseHistory.push(currentScenarioTitle);
+      proseLog.push(initDomText);
+  } else if (phaseHistory[phaseHistory.length - 1] !== currentScenarioTitle && !isCompleted) {
+      phaseHistory.push(currentScenarioTitle);
+      const domName = sortedCults.length > 0 ? sortedCults[0][0] : '';
+      const domPct = sortedCults.length > 0 ? Math.round((sortedCults[0][1].count / totalNodes) * 100) : 0;
+      
+      const transTemplates = [
+          (scene, name, pct) => `As generations progress, cycles of colonisation and assimilation begin reshaping the map. A <strong>${scene}</strong> emerges as <strong>${name}</strong> advances their territorial control to ${pct}%, while opposing enclaves either integrate or fortify their resistance.`,
+          (scene, name, pct) => `Further shifts in ideological dominance push the topology toward a <strong>${scene}</strong>, with <strong>${name}</strong> expanding its influence to ${pct}%.`,
+          (scene, name, pct) => `The cultural landscape undergoes significant upheaval, transitioning into a <strong>${scene}</strong> as <strong>${name}</strong> secures ${pct}% of the global territory.`,
+          (scene, name, pct) => `Continued assimilation dynamics drive the world into a <strong>${scene}</strong>, establishing <strong>${name}</strong> at a formidable ${pct}% footprint.`
+      ];
+      
+      let tIndex = Math.max(0, phaseHistory.length - 2) % transTemplates.length;
+      let generatedProse = transTemplates[tIndex](currentScenarioTitle, domName, domPct);
+      proseLog.push(generatedProse);
+  }
+
+  if (isCompleted && !proseLog.some(p => p.startsWith("The world has permanently stabilized"))) {
+      const endDomName = sortedCults.length > 0 ? sortedCults[0][0] : '';
+      const endDomPct = sortedCults.length > 0 ? Math.round((sortedCults[0][1].count / totalNodes) * 100) : 0;
+      const endDomStat = cultStats[endDomName];
+      const endDomMoral = endDomStat && endDomStat.count > 0 ? getMoralLabel(endDomStat.moralSum / endDomStat.count) : 'Notopian';
+      
+      let endProseText = `The world has permanently stabilized into a <strong>${currentScenarioTitle}</strong>. <strong>${endDomName}</strong> has established final hegemony, successfully colonizing ${endDomPct}% of the map. Remaining resistance has been permanently marginalized, cementing a <strong>${endDomMoral.toLowerCase()}</strong> global standard.`;
+      proseLog.push(endProseText);
+  }
+
+  const renderPhaseBlock = (phaseName, index) => {
+      return `
+      <div style="display: flex; gap: 12px; color: var(--text);">
+          <span style="font-family: var(--ff-mono); font-weight: 500; font-size: 0.95rem; margin-top: 4px;">0${index}</span>
+          <div style="line-height: 1.5;">
+              <strong style="font-size: 1.15rem;">${phaseName}</strong><br>
+              <span style="font-size: 1.05rem; font-style: italic; opacity: 0.8;">${getScenarioDefinition(phaseName)}</span>
+          </div>
+      </div>
+      `;
+  };
+
+  const initPhaseHTML = phaseHistory.length > 0 ? renderPhaseBlock(phaseHistory[0], 1) : '—';
+
+  if (!isCompleted) {
+     if (proseLog.length > 1) {
+         transProseHTML = proseLog.slice(1).map((p, i, arr) => `<div class="wb-row ${i === arr.length - 1 ? 'fade-in-text' : ''}" style="margin-bottom: 1.5rem;">${p}</div>`).join('');
+     } else {
+         transProseHTML = `<div style="color: #8E8E93; font-style: italic;">Monitoring topological shift events...</div>`;
+     }
+     
+     if (phaseHistory.length > 1) {
+         transPhaseStr = phaseHistory.slice(1).map((p, i, arr) => `<div class="wb-row ${i === arr.length - 1 ? 'fade-in-text' : ''}" style="margin-bottom: 1.5rem;">${renderPhaseBlock(p, i+2)}</div>`).join('');
+     } else {
+         transPhaseStr = `<div style="color: #8E8E93; font-style: italic;">—</div>`;
+     }
+     
+     endProseHTML = `<div style="color: #8E8E93; font-style: italic;">Awaiting generational stabilization...</div>`;
+     endPhaseStr = `<div style="color: #8E8E93; font-style: italic;">—</div>`;
+  } else {
+     let transProses = proseLog.slice(1, -1);
+     let transPhases = phaseHistory.slice(1);
+
+     if (transProses.length > 0) {
+         transProseHTML = transProses.map(p => `<div class="wb-row" style="margin-bottom: 1.5rem;">${p}</div>`).join('');
+         transPhaseStr = transPhases.map((p, i) => `<div class="wb-row" style="margin-bottom: 1.5rem;">${renderPhaseBlock(p, i+2)}</div>`).join('');
+     } else {
+         transProseHTML = `<em>Stable conversion recorded. No intermediate epochs tracked.</em>`;
+         transPhaseStr = `<em>—</em>`;
+     }
+     
+     endProseHTML = `<div class="wb-row fade-in-text">${proseLog[proseLog.length - 1]}</div>`;
+     endPhaseStr = `<div class="wb-row fade-in-text">${renderPhaseBlock(currentScenarioTitle, phaseHistory.length > 0 ? transPhases.length + 2 : 2)}</div>`;
+  }
+
+  const worldBuildingHTML = `
+      <div style="display: grid; grid-template-columns: 260px 1.8fr 1.4fr; gap: 3.5rem; align-items: start;">
+          <div style="font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; color: #8E8E93; letter-spacing: 0.15em; font-weight: 500; text-align: right; border-right: 1px solid var(--border-md); padding-right: 2rem; padding-top: 0.5rem; height: 100%;">
+              Initial Conditions
+          </div>
+          <div style="font-family: var(--ff-serif); font-size: 1.25rem; line-height: 1.6; color: var(--text); padding-bottom: 3rem;">
+              ${initDomText}
+          </div>
+          <div style="border-left: 1px solid var(--border-md); padding-left: 2.5rem; padding-bottom: 3rem;">
+              ${initPhaseHTML}
+          </div>
+
+          <div style="font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; color: #8E8E93; letter-spacing: 0.15em; font-weight: 500; text-align: right; border-right: 1px solid var(--border-md); padding-right: 2rem; padding-top: 0.5rem; height: 100%;">
+              Transitional Phases
+          </div>
+          <div style="font-family: var(--ff-serif); font-size: 1.25rem; line-height: 1.6; color: var(--text); padding-bottom: 3rem;">
+              ${transProseHTML}
+          </div>
+          <div style="border-left: 1px solid var(--border-md); padding-left: 2.5rem; padding-bottom: 3rem;">
+              ${transPhaseStr}
+          </div>
+
+          <div style="font-family: var(--ff-mono); font-size: 0.85rem; text-transform: uppercase; color: #8E8E93; letter-spacing: 0.15em; font-weight: 500; text-align: right; border-right: 1px solid var(--border-md); padding-right: 2rem; padding-top: 0.5rem; height: 100%;">
+              End-State Resolution
+          </div>
+          <div style="font-family: var(--ff-serif); font-size: 1.25rem; line-height: 1.6; color: var(--text); padding-bottom: 0;">
+              ${endProseHTML}
+          </div>
+          <div style="border-left: 1px solid var(--border-md); padding-left: 2.5rem; padding-bottom: 0;">
+              ${endPhaseStr}
+          </div>
+      </div>
+  `;
+  
+  updateHTMLWithAnim('world-building-content', worldBuildingHTML, 'fade');
+  updateCharts();
+}
+
+function getSmoothPath(points) {
+    if (points.length === 0) return '';
+    if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
+    let d = `M ${points[0].x},${points[0].y} `;
+    for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i];
+        const p1 = points[i + 1];
+        const cp1x = p0.x + (p1.x - p0.x) / 3;
+        const cp1y = p0.y;
+        const cp2x = p1.x - (p1.x - p0.x) / 3;
+        const cp2y = p1.y;
+        d += `C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p1.x},${p1.y} `;
+    }
+    return d;
+}
+
+function initCharts() {
+    const linePathGroup = document.getElementById('line-path-group');
+    const lineGridGroup = document.getElementById('line-grid-group');
+    const radarSvg = document.getElementById('radar-chart-svg');
+    if (!linePathGroup || !radarSvg || !lineGridGroup) return;
+    
+    linePathGroup.innerHTML = '';
+    lineGridGroup.innerHTML = '';
+    radarSvg.innerHTML = '';
+    
+    // Line Chart Grid Initialization
+    const wL = 600, hL = 400, padY = 40, startX = 80, endX = 520;
+    [0, 25, 50, 75, 100].forEach(val => {
+        const y = hL - padY - (val / 100) * (hL - padY * 2);
+        lineGridGroup.innerHTML += `<line x1="${startX - 20}" y1="${y}" x2="${endX + 20}" y2="${y}" stroke="var(--border-md)" stroke-dasharray="4 4" stroke-width="1.5"></line>
+        <text x="${startX - 30}" y="${y + 4}" text-anchor="end" font-family="var(--ff-mono)" font-size="12px" fill="#8E8E93">${val}</text>`;
+    });
+    lineGridGroup.innerHTML += `<text x="${startX}" y="${hL - 5}" text-anchor="middle" font-family="var(--ff-mono)" font-size="12px" fill="var(--text)">INITIAL</text>`;
+    lineGridGroup.innerHTML += `<text x="${endX}" y="${hL - 5}" text-anchor="middle" font-family="var(--ff-mono)" font-size="12px" fill="var(--text)">END</text>`;
+    
+    const metrics = ['moral', 'virality', 'impermeability', 'integrity'];
+    const colors = ['#8E8E93', '#40916C', '#A64B35', '#E6994D'];
+    const isBorder = [false, false, true, false];
+    
+    metrics.forEach((m, i) => {
+        linePathGroup.innerHTML += `
+            <path id="line-${m}" fill="none" stroke="${colors[i]}" stroke-width="4" stroke-linecap="round" filter="url(#glow)" ${isBorder[i] ? 'stroke-dasharray="8 6"' : ''}></path>
+            <path id="area-${m}" fill="${colors[i]}" opacity="0.05"></path>
+        `;
+    });
+
+    // Radar Chart Initialization
+    const cx = 300, cy = 250, rMax = 180;
+    [25, 50, 75, 100].forEach(level => {
+        const r = (level / 100) * rMax;
+        radarSvg.innerHTML += `<polygon points="${cx},${cy-r} ${cx+r},${cy} ${cx},${cy+r} ${cx-r},${cy}" fill="none" stroke="var(--border-md)" stroke-dasharray="4 4" stroke-width="1.5"></polygon>
+        <text x="${cx + 4}" y="${cy - r + 12}" font-family="var(--ff-mono)" font-size="10px" fill="#8E8E93">${level}</text>`;
+    });
+    radarSvg.innerHTML += `<line x1="${cx - rMax}" y1="${cy}" x2="${cx + rMax}" y2="${cy}" stroke="var(--border-md)" stroke-width="1.5"></line>`;
+    radarSvg.innerHTML += `<line x1="${cx}" y1="${cy - rMax}" x2="${cx}" y2="${cy + rMax}" stroke="var(--border-md)" stroke-width="1.5"></line>`;
+    
+    const axes = [
+        { x: cx, y: cy - rMax - 15, label: "SUB-TOPIA", anchor: "middle" },
+        { x: cx + rMax + 15, y: cy + 4, label: "VIRALITY", anchor: "start" },
+        { x: cx, y: cy + rMax + 30, label: "IMPERMEABILITY", anchor: "middle" },
+        { x: cx - rMax - 15, y: cy + 4, label: "INTEGRITY", anchor: "end" }
+    ];
+    axes.forEach(a => {
+        radarSvg.innerHTML += `<text x="${a.x}" y="${a.y}" text-anchor="${a.anchor}" font-family="var(--ff-mono)" font-size="12px" font-weight="600" letter-spacing="0.1em" fill="var(--text)">${a.label}</text>`;
+    });
+
+    CULTURE_NAMES.forEach((name, i) => {
+        const moral = cultureScores.moral[i];
+        const vir = cultureScores.virality[i];
+        const imp = cultureScores.impermeability[i];
+        const integ = cultureScores.integrity[i];
+
+        const pMoral = cy - (moral / 100) * rMax;
+        const pVir = cx + (vir / 100) * rMax;
+        const pImp = cy + (imp / 100) * rMax;
+        const pInteg = cx - (integ / 100) * rMax;
+        const pts = `${cx},${pMoral} ${pVir},${cy} ${cx},${pImp} ${pInteg},${cy}`;
+
+        radarSvg.innerHTML += `<polygon id="radar-poly-${i}" points="${pts}" fill="${PASTEL_RAINBOW[i]}" fill-opacity="0.25" stroke="${PASTEL_RAINBOW[i]}" stroke-width="3" style="opacity: 0;"></polygon>`;
+    });
+    
+    document.getElementById('multi-var-graph-legend').innerHTML = CULTURE_NAMES.map((name, i) => `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 12px; height: 12px; background: ${PASTEL_RAINBOW[i]}; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+            <span style="font-family: var(--ff-mono); font-size: 0.75rem; text-transform: uppercase;">${name}</span>
+        </div>
+    `).join('');
+}
+
+function updateCharts() {
+    if (!epochHistory || epochHistory.length === 0) return;
+    
+    const metrics = ['moral', 'virality', 'impermeability', 'integrity'];
+    const hL = 400, padY = 40, startX = 80, endX = 520;
+    const maxE = Math.max(1, simulationEpoch);
+    
+    // Draw all collected points up to the current epoch
+    metrics.forEach((m, i) => {
+        const polyline = document.getElementById(`line-${m}`);
+        const areaLine = document.getElementById(`area-${m}`);
+        if (!polyline || !areaLine) return;
+        
+        let ptsObj = [];
+        epochHistory.forEach((snap, e) => {
+            const val = m === 'moral' ? snap.avgs.moral : 
+                        m === 'virality' ? snap.avgs.virality : 
+                        m === 'impermeability' ? snap.avgs.impermeability : snap.avgs.integrity;
+            
+            const x = startX + (e / maxE) * (endX - startX);
+            const y = hL - padY - (val / 100) * (hL - padY * 2);
+            ptsObj.push({x, y});
+        });
+        
+        const pathD = getSmoothPath(ptsObj);
+        polyline.setAttribute('d', pathD);
+        
+        if (ptsObj.length > 0) {
+             const areaD = pathD + ` L ${ptsObj[ptsObj.length-1].x},${hL - padY} L ${ptsObj[0].x},${hL - padY} Z`;
+             areaLine.setAttribute('d', areaD);
+        }
+    });
+
+    const clipRect = document.getElementById('line-clip-rect');
+    if (clipRect) clipRect.setAttribute('width', (endX - startX) + 40);
+
+    // Update Radar Opacities Instantly during sim
+    if (!isCompleted) {
+        const total = nodes.length;
+        const currentCounts = epochHistory[epochHistory.length - 1].counts;
+        CULTURE_NAMES.forEach((name, i) => {
+            const poly = document.getElementById(`radar-poly-${i}`);
+            if (poly) {
+                const presence = currentCounts[i] / total;
+                poly.style.opacity = presence > 0 ? Math.max(0.15, presence * 0.85) : 0;
+            }
+        });
+    }
+}
+
+function startChartLoop() {
+    if (chartAnimFrame) cancelAnimationFrame(chartAnimFrame);
+    
+    const loopDuration = 3500;
+    const drawRatio = 0.8; 
+    const startTime = Date.now();
+    const maxE = Math.max(1, epochHistory.length - 1);
+    const startX = 80, endX = 520;
+
+    function animate() {
+        if (!isCompleted) return;
+        
+        const elapsed = (Date.now() - startTime) % loopDuration;
+        const progress = elapsed / loopDuration;
+        const drawP = Math.min(progress / drawRatio, 1.0);
+        
+        // Update Line Clip
+        const clipRect = document.getElementById('line-clip-rect');
+        if (clipRect) clipRect.setAttribute('width', (drawP * (endX - startX)) + 40);
+
+        // Update Radar Opacities Interpolated
+        const exactE = drawP * maxE;
+        const fE = Math.floor(exactE);
+        const cE = Math.min(Math.ceil(exactE), maxE);
+        const remainder = exactE - fE;
+
+        const totalNodes = nodes.length;
+        CULTURE_NAMES.forEach((name, i) => {
+            const poly = document.getElementById(`radar-poly-${i}`);
+            if (poly) {
+                const startCount = epochHistory[fE].counts[i];
+                const endCount = epochHistory[cE].counts[i];
+                const currentCount = startCount + (endCount - startCount) * remainder;
+                const presence = currentCount / totalNodes;
+                poly.style.opacity = presence > 0 ? Math.max(0.15, presence * 0.85) : 0;
+            }
+        });
+
+        chartAnimFrame = requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function setPrimary(type) { if (isSimultaneous) setSimultaneous(false); activePrimary = type; if (activePrimary === activeSecondary) activeSecondary = null; if (activePrimary === 'impermeability') isImpOverlayActive = false; updateDisplay(); }
+function setSecondary(type) { 
+  if (isSimultaneous || type === activePrimary) return; 
+  if (type === 'impermeability') { 
+    isImpOverlayActive = !isImpOverlayActive; 
+    if (isImpOverlayActive) { if (currentDensity !== 'spatial') setDensity('spatial'); } 
+    else { setDensity('compact'); }
+  } else { 
+    activeSecondary = (activeSecondary === type) ? null : type; 
+    if (activeSecondary && showScores) toggleScores(); 
+  } 
+  updateDisplay(); 
+}
+
+function activateGridMode() { if (!isSimultaneous && activePrimary === 'impermeability') { setSimultaneous(true); return; } activePrimary = 'impermeability'; isImpOverlayActive = false; if (isSimultaneous) setSimultaneous(false); updateDisplay(); }
+function setSimultaneous(val) { isSimultaneous = val; if (val) { activeSecondary = null; isImpOverlayActive = false; } document.body.classList.toggle('sim-mode', val); updateDisplay(); initGrids(currentLayers); }
+function toggleScores() { if (!isSpectrum) return; showScores = !showScores; if (showScores) { activeSecondary = null; isImpOverlayActive = false; } document.body.classList.toggle('hide-scores', !showScores); document.getElementById('sub-scores').classList.toggle('active', showScores); updateDisplay(); }
+
+function updateDisplay() {
+  const isDark = document.body.classList.contains('dark-mode');
+  const baseStroke = isDark ? "#3A3A3C" : "#E2DDD1";
+  updateButtonStates();
+  updateCulturalAnalytics();
+  document.body.classList.toggle('show-ranges', showScores && isSpectrum);
+  document.getElementById('overlays-group').classList.toggle('visible', !isSimultaneous);
+  document.getElementById('spectrum-sub-group').classList.toggle('visible', isSpectrum);
+  const rMult = scoreScale / 100;
+  const updateRangeText = (id, l, h) => { 
+    const el = document.getElementById(id);
+    if (el) el.textContent = `${(l * rMult).toFixed(scoreScale === 10 ? 1 : 0)}-${(h * rMult).toFixed(scoreScale === 10 ? 1 : 0)}`; 
+  };
+  ['moral', 'virality', 'imp', 'integrity'].forEach(type => { updateRangeText(`range-${type}-low`, 0, 33); updateRangeText(`range-${type}-med`, 34, 66); updateRangeText(`range-${type}-high`, 67, 100); });
+  const gridMap = { 'virality': 'box-virality', 'integrity': 'box-integrity', 'impermeability': 'box-impermeability', 'moral': 'box-main', 'cultures': 'box-cultures' };
+  Object.keys(gridMap).forEach(key => { const el = document.getElementById(gridMap[key]); if (isSimultaneous) el.style.display = 'flex'; else { el.style.display = (key === activePrimary) ? 'flex' : 'none'; if (key === activePrimary) el.style.width = "600px"; } });
+  
+  nodes.forEach((n, i) => {
+    const types = ['virality', 'integrity', 'impermeability', 'moral', 'cultures'];
+    types.forEach((type, idx) => {
+      const val = type === 'cultures' ? n.cultureIndex : n[type];
+      const col = getSpectrumColor(val, paletteMap[type], type);
+      const labelFill = isColorDark(col) ? "#FFFFFF" : "#1A1A1A";
+
+      if (isSimultaneous) {
+        n.els[idx].style.fill = (type === 'impermeability') ? "transparent" : col;
+        n.els[idx].style.stroke = (type === 'impermeability') ? col : baseStroke;
+        n.els[idx].style.strokeWidth = (type === 'impermeability') ? "2.8px" : "1.4px";
+        n.txt[idx].style.fill = (type !== 'impermeability') ? labelFill : "var(--text)";
+        n.txt[idx].textContent = type === 'cultures' ? Math.round(val)+1 : formatScore(val);
+      } else if (type === activePrimary) {
+        n.els[idx].style.fill = (type === 'impermeability') ? "transparent" : col;
+        n.txt[idx].style.fill = (type !== 'impermeability') ? labelFill : "var(--text)";
+        if (isImpOverlayActive) { n.els[idx].style.stroke = getSpectrumColor(n['impermeability'], paletteMap['impermeability'], 'impermeability'); n.els[idx].style.strokeWidth = "5px"; }
+        else { n.els[idx].style.stroke = (type === 'impermeability') ? col : baseStroke; n.els[idx].style.strokeWidth = (type === 'impermeability') ? "3.5px" : "2px"; }
+        if (activeSecondary) {
+          const sVal = activeSecondary === 'cultures' ? n.cultureIndex : n[activeSecondary];
+          n.circles[idx].style.fill = getSpectrumColor(sVal, paletteMap[activeSecondary], activeSecondary);
+          n.circles[idx].classList.add('active');
+        } else { n.circles[idx].classList.remove('active'); }
+        n.txt[idx].textContent = (showScores && isSpectrum) ? (type === 'cultures' ? val + 1 : formatScore(val)) : "";
+      }
+    });
+  });
+  ['virality', 'moral', 'integrity', 'cultures', 'impermeability'].forEach(id => { const el = document.getElementById(`key-${id}`); if(el) el.classList.toggle('visible', isSimultaneous || activePrimary === id || activeSecondary === id || (id === 'impermeability' && isImpOverlayActive)); });
+}
+
+function toggleTheme() { document.body.classList.toggle('dark-mode'); document.getElementById('theme-icon-container').innerHTML = document.body.classList.contains('dark-mode') ? ICONS.moon : ICONS.sun; updateDisplay(); }
+function setSpectrum(v) { isSpectrum = v; if (!v && showScores) { showScores = false; document.body.classList.add('hide-scores'); document.getElementById('sub-scores').classList.remove('active'); } updateDisplay(); }
+
+function setScale(l) { 
+  if (isPlaying) return;
+  if (isCompleted) { currentLayers = l; randomizeConfiguration(); return; }
+  currentLayers = l; 
+  document.querySelectorAll('#scale-toggle .segment').forEach((b, i) => b.classList.toggle('active', i === l-1)); 
+  initGrids(l); 
+}
+
+function resetToInitial() {
+    const btn = document.getElementById('revert-btn');
+    btn.classList.add('pressed'); setTimeout(() => btn.classList.remove('pressed'), 400);
+    isCompleted = false;
+    phaseHistory = [];
+    proseLog = [];
+    epochHistory = [];
+    simulationEpoch = 0;
+    
+    if (chartAnimFrame) {
+        cancelAnimationFrame(chartAnimFrame);
+        chartAnimFrame = null;
+    }
+    
+    CULTURE_NAMES.forEach((name, i) => {
+        const poly = document.getElementById(`radar-poly-${i}`);
+        if (poly) poly.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    });
+    
+    const logContainer = document.getElementById('interaction-log-container');
+    if (logContainer) logContainer.innerHTML = '<div style="text-align: center; color: #8E8E93; font-style: italic; margin-top: 2rem;">Awaiting simulation data...</div>';
+
+    updateHTMLWithAnim('combined-prose-container', generatePlaceholderExp(), 'none');
+
+    const simBtn = document.getElementById('scenario-1-btn');
+    simBtn.classList.remove('playing', 'completed');
+    if (isPlaying) toggleScenario(1);
+    
+    if (!initialState) return;
+    initialState.forEach((snap, i) => { 
+        nodes[i].cultureIndex = snap.cultureIndex; 
+        nodes[i].integrity = snap.integrity; 
+        nodes[i].impermeability = snap.impermeability; 
+        nodes[i].moral = snap.moral; 
+        nodes[i].virality = snap.virality; 
+    });
+    
+    captureEpochState(nodes);
+    
+    simBtn.lastChild.textContent = ' Run Simulation'; 
+    document.getElementById('scenario-icon').innerHTML = ICONS.play;
+    
+    updateDisplay();
+    initCharts();
+    updateButtonStates();
+}
+
+function randomizeConfiguration() { 
+  const btn = document.getElementById('gen-config-btn');
+  btn.classList.add('pressed'); setTimeout(() => btn.classList.remove('pressed'), 400);
+  isCompleted = false; if(isPlaying) toggleScenario(1);
+  
+  if (activeScenarioMode === 'random') {
+      cultureScores.moral = PASTEL_RAINBOW.map(() => Math.random() * 100);
+      cultureScores.integrity = PASTEL_RAINBOW.map(() => Math.random() * 100);
+      cultureScores.virality = PASTEL_RAINBOW.map(() => Math.random() * 100);
+      cultureScores.impermeability = PASTEL_RAINBOW.map(() => Math.random() * 100);
+  } else if (activeScenarioMode === 'monocultural') {
+      const winnerIdx = Math.floor(Math.random() * 7);
+      cultureScores.moral = PASTEL_RAINBOW.map(() => Math.random() * 100);
+      cultureScores.integrity = PASTEL_RAINBOW.map((_, i) => i === winnerIdx ? 95 + Math.random()*5 : Math.random() * 40);
+      cultureScores.virality = PASTEL_RAINBOW.map((_, i) => i === winnerIdx ? 95 + Math.random()*5 : Math.random() * 30);
+      cultureScores.impermeability = PASTEL_RAINBOW.map((_, i) => i === winnerIdx ? 50 + Math.random()*20 : Math.random() * 30);
+  } else if (activeScenarioMode === 'dystopian' || activeScenarioMode === 'utopian') {
+      const isUtopian = activeScenarioMode === 'utopian';
+      cultureScores.moral = PASTEL_RAINBOW.map(() => isUtopian ? 67 + Math.random() * 33 : Math.random() * 33);
+      
+      let roles = ['A', 'A', 'A', 'F', 'F', 'W', 'W'];
+      roles.sort(() => Math.random() - 0.5);
+      
+      cultureScores.integrity = [];
+      cultureScores.virality = [];
+      cultureScores.impermeability = [];
+      
+      roles.forEach(role => {
+          if (role === 'A') { // Aggressor (high spread, weak defense)
+              cultureScores.virality.push(80 + Math.random() * 20);
+              cultureScores.impermeability.push(20 + Math.random() * 30);
+              cultureScores.integrity.push(30 + Math.random() * 30);
+          } else if (role === 'F') { // Fortress (no spread, high defense)
+              cultureScores.virality.push(10 + Math.random() * 20);
+              cultureScores.impermeability.push(80 + Math.random() * 20);
+              cultureScores.integrity.push(80 + Math.random() * 20);
+          } else { // Weak (food)
+              cultureScores.virality.push(10 + Math.random() * 20);
+              cultureScores.impermeability.push(10 + Math.random() * 20);
+              cultureScores.integrity.push(10 + Math.random() * 20);
+          }
+      });
+  }
+
+  initGrids(currentLayers); 
+  const simBtn = document.getElementById('scenario-1-btn');
+  simBtn.classList.remove('playing', 'completed');
+  simBtn.lastChild.textContent = ' Run Simulation'; document.getElementById('scenario-icon').innerHTML = ICONS.play;
+  updateDisplay(); 
+  updateButtonStates();
+}
+
+window.onload = () => {
+  const container = document.getElementById('culture-keys-container');
+  CULTURE_NAMES.forEach((name, i) => {
+    const item = document.createElement('div'); item.className = 'key-item';
+    item.innerHTML = `<div class="swatch" style="color: ${PASTEL_RAINBOW[i]}"></div> ${name} <span class="key-range">${i + 1}</span>`;
+    container.appendChild(item);
+  });
+  setSystemLevel('basic');
+};
+</script>
+</body>
+</html>
